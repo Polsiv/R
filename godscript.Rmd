@@ -1,0 +1,143 @@
+---
+title: 'Class 3: descriptive data analysis'
+author: "Silv"
+date: "2024-08-28"
+output: html_document
+---
+
+# data analysis
+
+installation and loading of a library for data reading in excel (xls, xlsx), it goes by the name of "readxl" including the function that let us  read files.
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+#install.packages("readxl", "e1071", dependencies = T)
+
+library(readxl)
+library(e1071)
+
+```
+
+we done!, now load dataframe Medifis
+
+
+
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+data = read_excel("datos.xls", sheet = "Medifis",  skip = 2)
+
+```
+
+time to analyse, for instance height
+
+```{r}
+
+x = data$`Estatura (cm)`
+
+```
+
+time to analyze (real)
+
+##ESTADISTICOS DE CENTRALIDAD
+
+resume patrones de posicionamiento/ localizacion: media, mediana, moda, percentiles, minimo, maximo
+
+
+
+
+media = punto de equilibrio o centro de gravedad de los datos
+
+mediana = individuo mas profundo / representativo o el menos raro
+
+
+p_k: es el individuo  en la posicion k de 100
+
+
+moda = el valor que mas se repite si y solo si si la variable es discreta en un rango especificado
+moda = valor que maximiza la funcion de densisdad de probabilidad (punto modal)
+
+
+
+```{r}
+
+my_mean = mean(x)
+my_median = median(x)
+p25 = quantile(x, 0.25)
+p75 = quantile(x, 0.75)
+
+
+minimum = min(x)
+maximum = max(x)
+
+MC = c(my_mean, my_median, p25, p75, minimum, maximum
+
+print(MC)
+
+```
+
+medidas de dispercion: INDICADOR QUE RESUME PATRONES DE VARIABILIDAD RESPECTO 
+
+varianza = mide la dispercion media de los datos respecto a su punto de equilibrio 
+
+desviacion estandar = sqrt(varianza)
+
+rango = promedio de las distancias cuadraticas de los individuos respecto a su punto de equilibrio  (diferencia amxima entre 2 invidiuos)
+
+range = max - min
+
+rango interquartil: iqr = p75 - p25 (50% mas profundo) (masa principal de datos) (data main bulk)
+
+
+```{r}
+
+
+varianza = var(x)
+desv.est = sd(x)
+rango = maximum - minimum
+rango.int = IQR(x)
+
+
+
+Md = c(varianza, desv.est, rango, rango.int)
+
+print(Md)
+
+
+
+
+
+```
+
+
+#ESTADISTICOS DE FORMA
+
+indicador que resume patrones de desplazamiento vertical y horizontal de una muestra aleatoria. Entre eestas tenemos: el coeficiente de asimetria, coeficiente de curtosis
+
+
+```{r}
+curtosis = e1071::kurtosis(x)
+
+asimetria = skewness(x)
+
+mf = c(curtosis, asimetria)
+
+
+print(mf)
+
+```
+
+
+##HISTOGRAMA Y BOXPLOT
+
+
+
+```{r}
+hist(x)
+boxplot(x, horizontal =  T)
+```
+
+which()
+
+
+
