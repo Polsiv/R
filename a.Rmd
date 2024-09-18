@@ -54,6 +54,7 @@ print(rbind(val.sam, val.teo))
 ```
 
 
+Exponential
 
 ```{r}
 
@@ -104,69 +105,43 @@ print(rbind(val.sam, val.teo))
 
 
 
-
-
-
-
+With Proportion
 
 ```{r}
 
+#m copies of random variable sized n
 N = 100000
 p = 0.5
-
-pob = rbinom(N, 1, p)
-
+poblacion = rbinom(N, 1, p)
 
 m = 10000
 n = 1000
 proporciones = rep(0, m)
 
-
-for(i in i:m){
-  ind = sample (1:N, m replace = F)
+for(i in 1:m){
+  ind = sample (1:N, n, replace = F)
   muestra = poblacion[ind]
   proporciones[i] = mean(muestra)
 }
 
+#generate teoric normal distribution
+mu.t = p
+sigma.t = sqrt(p * (1 - p) / n)
+a = sort(rnorm(10000, mu.t, sigma.t))
 
 
+#histogram of sample proportions and comparison with the normal distribution
+hist(proporciones, freq = F, main = "sample proportion distribution")
+lines(a, dnorm(a, mu.t, sigma.t), col = "blue")
 
 
-```
+#compare mean and variance with the teoric ones
 
+val.sam = c(mean(proporciones), var(proporciones))
+val.teo = c(mu.t, sigma.t^2)
 
+print(rbind(val.sam, val.teo))
 
-
-```{r}
-
-# Parámetros de la distribución
-mu <- 170  # Media
-sigma <- 2  # Desviación estándar
-
-# Valores para el eje x
-x <- seq(mu - 4 * sigma, mu + 4 * sigma, length.out = 1000)
-
-# Función de densidad de probabilidad (curva normal)
-y <- dnorm(x, mean = mu, sd = sigma)
-
-# Crear la gráfica
-plot(x, y, type = "l", lwd = 2, col = "blue", 
-     main = "Distribución del Promedio Muestral", 
-     xlab = "Promedio Muestral (cm)", 
-     ylab = "Densidad de Probabilidad")
-
-# Rellenar el área bajo la curva
-polygon(c(x, rev(x)), c(y, rep(0, length(y))), col = rgb(0, 0, 1, 0.2), border = NA)
-
-# Línea vertical en la media
-abline(v = mu, col = "red", lty = 2, lwd = 2)
-
-# Agregar leyenda
-legend("topright", legend = expression(bar(x) ~ N(170, 2^2)), col = "blue", lwd = 2)
-legend("topleft", legend = paste("Media =", mu, "cm"), col = "red", lty = 2, lwd = 2)
-
-# Mostrar la cuadrícula
-grid()
 
 ```
 
