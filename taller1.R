@@ -85,11 +85,7 @@ number = readline("enter any number!")
 number = as.integer(number)
 mult_table(number)
 
-
-
 #6
-
-
 
 calculate_e = function(err){
   

@@ -1,0 +1,210 @@
+---
+title: "Inferencia Estadística Taller 2"
+subtitle: "Universidad de San Buenaventura"
+author: "Sebastián López (97500)"
+date: "2024-08-29"
+output: html_document
+---
+<div style="text-align: justify; font-family: 'Times New Roman';">
+# Punto 1
+
+```{r}
+TMB=function(P,A,E,S){
+  if(toupper(S)=="H"){
+    return(66+13.7*P+5*A-6.8*E)
+  }else if(toupper(S)=="M"){
+    return(655+9.6*P+1.8*A-4.7*E)
+  }else{
+    print("Sexo digitado erroneamente")
+    return(NULL)
+  }
+}
+sexo="h"
+edad=19
+altura=1.63
+peso=53.0
+result=sprintf("El TMB es de %.2f calorias",TMB(peso,altura,edad,sexo))
+print(result)
+```
+
+Para el punto 1 se creó una funcion llamada TMB para medir la Tasa de Metabolismo Basal, el TMB se mide con formulas diferentes dependiendo el sexo de la persona, por lo que en la funcion es el primer dato a tener en cuenta. Si la persona a evaluar es hombre (H), se usa la formula "66 + 13.7 * P + 5 * A - 6.8 * E", en cambio si la persona es mujer (M) se usa la formula "655 + 9.6 * P + 1.8 * A - 4.7 * E". En las formulas la variables vienen siendo: P = Peso, A = Altura(Estatura) y E = Edad.
+Para probar la funcion se envian los datos requeridos y se guardan en la variable result mediante la funcion "sprintf" para darle un formato al resultado que por consiguiente se imprime.
+
+Pd: Se manejó algunos posible errores como por ejemplo que se ingrese un caracter en minuscula, entonces se hace uso de la funcion "toupper" para comparar todo en mayusculas, y tambien se maneja el caso en que la variable de sexo sea incorrecta (Diferente a "H" y "M").
+
+
+
+# Punto 2
+
+```{r}
+#Punto 2
+bubbleSort = function(a,forma){
+  for (i in 2:length(a)){
+    for(j in 1:(length(a)+1-i)){
+      if ((a[j] > a[j+1]) && toupper(forma)=="A"){
+        aux=a[j]
+        a[j]=a[j+1]
+        a[j+1]=aux
+      }
+      if ((a[j] < a[j+1]) && toupper(forma)=="D"){
+        aux=a[j]
+        a[j]=a[j+1]
+        a[j+1]=aux
+      }
+    }
+  }
+  return(a)
+}
+v=c(3,7,12,56,3,1,5,8,4,2,6,24,3,63,5,37,48,59,69,70,25)
+formas=c("A","D")
+forma=sample(formas,1)
+print("Desordenado")
+print(v)
+print(paste0("Ordenado de forma '",forma,"'"))
+print(bubbleSort(v,forma))
+```
+
+Para el punto 2 se creó la funcion bubbleSort (En español "La burbuja") para realizar un ordenamiento, esta funcion recibe al vector "a" que es el vector a ordenar, y la forma de ordenamiento ya sea ascendente (A) o descendente (D) para ordenar el vector "a" de la forma deseada. El algoritmo Bubble Sort toma el valor de todas las posiciones y va a compararlas con cada una de las posiciones siguientes, de manera que si un numero A en la posicion "n" es mayor que un numero B en la posicion "n+1" se intercambia la posicion de los elementos con la ayuda de una variable auxiliar (aux), es decir, el numero A toma la posicion del numero B, y B toma la posicion del numero A. Si el numero A es menor que B se asume que ya está ordenado y pasa a comparar el numero B (que ahora está en la posicion "n") con un numero C en la posicion "n+1". Todo esto teniendo en cuenta que se quiere ordenar ascendentemente.
+
+Si se ordena de manera descendente se compara haciendo la condicion de que el numero A en la posicion "n" sea menor que B en la posicion "n+1", es decir todo lo contrario a la ascendente donde la comparamos por quien es mayor.
+
+Dentro de la funcion de pone un condicional para cada forma, de esta manera trabajar las dos opciones en una sola funcion. Para la desicion de la forma se usó un vector formas que contiene "A" y "D" para despues usar la funcion "sample" y elija aleatoriamente una de las dos opciones. Finalmente se realiza la impresion del vector ordenado.
+
+
+
+# Punto 3
+
+```{r}
+bubbleSort = function(a,forma=sample(c("a","d"),1)){
+  for (i in 2:length(a)){
+    for(j in 1:(length(a)+1-i)){
+      if ((a[j] > a[j+1]) && toupper(forma)=="A"){
+        aux=a[j]
+        a[j]=a[j+1]
+        a[j+1]=aux
+      }
+      if ((a[j] < a[j+1]) && toupper(forma)=="D"){
+        aux=a[j]
+        a[j]=a[j+1]
+        a[j+1]=aux
+      }
+    }
+  }
+  return(a)
+}
+dimensionx=sample(2:5,1)
+dimensiony=sample(2:5,1)
+matriz=matrix(c(sample(1:1000,dimensionx*dimensiony)),nrow = dimensiony ,ncol = dimensionx)
+vectorMatriz=c(matriz)
+print("Desordenado")
+print(vectorMatriz)
+print("Ordenado")
+print(bubbleSort(vectorMatriz))
+```
+
+Para el punto 3 se hizo una modificacion en la funcion bubbleSort asignandole al parametro forma que elija aleatoriamente entre ascendente y descendente.
+
+Se crearon las variables dimensionx y dimensiony para generar aleatoriamente un numero entre 2 y 5 para definir el tamaño de cada dimension. Luego de generar las dimensiones se genera la matriz teniendo en cuenta la cantidad de los datos (que son el producto de multiplicar las dimensiones, estos numeros se generan aleatoriamente en un rango de 1 a 1000), y asignando a los parametros ncol y norw, las variables dimensionx y dimensiony, respectivamente para darle la dimension a a la matriz.
+
+Pd: la matriz mas grande que puede haber es 5 X 5, y la mas pequeña 2 X 2. sin embargo la dimension de la matriz es aleatoria. 
+
+
+
+# Punto 4
+
+```{r}
+A = function(p,n,i){
+  return((p*i)/(1-(1+i)**(-n)))
+}
+prestamo=1000000
+meses=12
+tasa=2.5/100
+print(A(prestamo,meses,tasa))
+```
+
+
+Pendiente por analisis
+
+
+
+# Punto 5
+
+```{r}
+factorial = function(n){
+  if (n == 0 || n==1 ){
+    return(1)
+  }else{
+    return(n*factorial(n-1))
+  }
+}
+calcularVectorFactorial = function(v){
+  resultado=c()
+  for(i in 1:length(v)){
+    resultado[i]=factorial(v[i])
+  }
+  return(resultado)
+}
+v = c(1:10)
+vectorFactorial=calcularVectorFactorial(v)
+for(i in 1:10){
+print(sprintf("%d! = %d",v[i],vectorFactorial[i]))
+}
+```
+
+Para el punto 5 se toma la funcion factorial usada en el Taller 1 y se crea la funcion calcularVectorFactorial que va a tomar cada elemento del vector, calculará su factorial y lo guardará en el vector resultado (esto realmente se podria hacer sin necesidad de una funcion pero pues está bien dejarlo sistematizado como una funcion que calcula el factorial de un vector).
+
+Se creó un vector "v" con los numeros desde 1 hasta 10 para calcular su factorial. Se define la variable vectorFactorial donde se guarda el calculo del factorial de todos los elementos del vector "v". Finalmente, se creó un ciclo para imprimir ordenadamente el numero y su factorial con ayuda de la funcion "sprintf" para darle un buen formato.
+
+
+
+# Punto 6
+
+```{r}
+library(readxl)
+library(e1071)
+datos = read_excel("datos.xls", sheet= "Prendas de Vestir", skip=2)
+```
+
+Se cargaron los paquetes para trabajar con archivos excel y realizar analisis estadistico. luego se guarda en la variable datos (que es un DataFrame) todos los datos que están en el archivo datos.xls en la hoja de calculo "Prendas de Vestir" y se le da un skip de 2 para saltar dos filas que es donde empiezan a aparecer los datos, es decir, a partir de la tercera fila.
+
+## Distribucion de Frecuencias y Ventas Atípicas
+
+### Camisetas
+```{r}
+camisetas = matrix( c(datos$Ciudad, datos$Camisetas), ncol = 2, 21, byrow = FALSE)
+
+
+
+# Create a histogram of the 'Camisetas' column
+hist(as.integer(camisetas[,2]),
+     main="Frecuencia de Ventas en Camisetas",
+     xlab = "Ventas",
+     ylab = "Frecuencia",
+     ylim = c(0,14),
+     xlim = c(0, 2200),
+     breaks = 10)
+
+
+
+
+```
+
+Una vez definidos los datos, se grafica un histograma de la venta de las camisas con respecto a su sucursal; este histograma representa lo siguiente:
+
+1) Hubieron 13 sucursales que vendieron menos de 250 camisetas
+2) Hubieron 4 sucursales que vendieron menos de 500 camisetas
+3) Hubo 1 sucursal que vendio mas de...
+
+Otro dato a observar es que 2 sucursales vendieron al rededor de 2000 unidades, las cuales son atipicas con respecto del resto, que tuvieron dificultad vendiendo mas de 1000 unidades
+  
+
+Para el 
+
+```{r}
+pantalones = datos$Pantalones
+hist(pantalones,main="Frecuencia de Ventas en Pantalones",xlab = "Ventas", ylab = "Frecuencia", ylim = c(0,14) ,breaks = 9)
+```
+
+
+
+</div>
