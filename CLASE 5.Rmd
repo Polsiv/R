@@ -1,0 +1,309 @@
+---
+title: "Clase  Intervalos de confianza"
+author: "Silv"
+date: "2024-09-18"
+output: html_document
+---
+
+# Ejercicios
+
+Vamos a realziar 2 ejercicios sobre interavalos de confianza, los cuales se encuentran en la presentacion.
+
+#ejercicio
+
+Para evaluar el contenido de nicotina en cierto tipo de
+cigarros elaborados por un proceso se toma una
+muestra aleatoria de 40 cigarrillos y se obtiene que la
+media muestral es 18.1 mg y la desviación estándar
+muestral es 1.7.
+
+### punto a)
+Estime con una confianza de 95% la cantidad de
+nicotina promedio por cigarro
+
+```{r}
+#Podemos calcuar el IC por aproximacion normal y t-student. realicemos ambas:
+
+#Por aproximacion normal
+
+alpha = 0.05
+n = 40
+x.bar = 18.1
+S = 1.7
+
+#margen de error
+me.n = qnorm(1 - (alpha / 2)) * S / sqrt(n)
+
+IC.n = c(x.bar - me.n, x.bar + me.n)
+
+print(IC.n)
+
+#IC por aproximacion normal
+```
+
+
+con un nivel de confizansa del 95% (a un nivel de significancia del 5%) la cantidad media poblacional/real de nicotina por cigarrillo estara entre [17.57, 18.62] mg. Equivalentemente, si pudiese remuestrar 100 intervalos en 95 de ellos la cantidad media real de nicotina por cigarro estara dentro de [17.57317 18.62683] y en 5 de ellos no estara.
+
+
+```{r}
+#Podemos calcuar el IC por aproximacion normal y t-student. realicemos ambas
+
+#Por T-student
+
+alpha = 0.05
+n = 40
+x.bar = 18.1
+S = 1.7
+
+#margen de error
+me.t = qt(1 - (alpha / 2), n - 1) * S / sqrt(n)
+
+IC.t = c(x.bar - me.t, x.bar + me.t)
+
+print(IC.t)
+
+#IC por aproximacion normal
+```
+
+
+Conclusion, la interpretacion es la misma.
+
+
+
+
+### punto b)
+
+¿Cuál es el error de estimación en el inciso anterior?
+
+
+El error de estimacion se define como ME.n o ME.t. De acuerdo al fenomeno estudiado, podemos decir que el margen de error es amplio dada la desviacion estandar muestral; es decir, la muestra de 40 cigarros muestra alta variabilidad en el contenido de nicotina. ME es aproximadamente es 0.52 mg.
+
+
+
+### punto c)
+Antes del estudio se suponía que μ = 17.5 mg (la cantidad media real de nicotina por cigarro). Dada la evidencia
+de los datos, ¿se puede rechazar tal supuesto?
+
+
+Como 17.5 no pertenece al intervalo de confianza [17.57317 18.62683], con una confianza del 95% se puede rechazar tal supuesto. Sin embargo, tener en cuenta que el I.C esta en funcion de alpha, si alpha tiende a 0 el IC se amplia y con ello la respuesta podria cambiar.
+
+
+
+### Punto d)
+
+Si se quiere estimar la media con un error máximo de 0.4,
+¿qué tamaño de muestra se requiere?
+
+
+
+```{r}
+
+
+ME.ast = 0.4
+n.ast = ceiling((qnorm(1 - (alpha/2)) * S /ME.ast)^2)
+
+if (n.ast > n){
+  cat("Se requieren", n.ast - n, "nuevos individuos para garantizar un margen de error de", ME.ast, "mg")
+} else {
+  cat ("Con", n, "individuos estamos bien")
+}
+
+
+
+```
+
+
+
+
+### Punto e)
+Con los datos anteriores, estime con una confianza de 95% la desviación estándar poblacional (del proceso)
+
+
+
+```{r}
+
+#IC del 95% para la desviacion estandar real/poblacional
+
+
+q1 = qchisq(1- (alpha/2), n - 1)
+
+q2 = qchisq(alpha/2, n - 1)
+
+a = (n - 1) * (S^2) / q1
+
+b = (n - 1) * (S^2) / q2
+
+IC.sigma = sqrt(c(a, b))
+
+print(IC.sigma)
+
+```
+
+
+Con un nivel de confianza del 95% (con un nivel de significancia del 5%) hay evidencia muestral suficiente para determinar el IC para la desviacion estandar real/poblacional de la cantidad de nicotina por cigarro, en mg. Este intervalo sera [1.392574 2.182860]
+
+Dado lo anterior podemos afirmar que la calidad de los cigarros tal vez no es la mejor, esto debido a que hay una varaibilidad alta en el contenido de nicontina por cigarro. Puede presentarse que hayan cigarros con muy poco contenido o con contenido excesivo.
+
+
+### Punto e)
+
+¿Qué puede decir sobre la cantidad mínima y máxima de
+nicotina por cigarro? Es posible garantizar con suficiente
+confianza que los cigarros tienen menos de 20 mg de nicotina.
+
+Para dar respuesta a este ejercicio debemos considerar 3 alternativas.
+
+1) calcular los IC del 95% para la cantidad maxima real de nicotina por cigarro, esto se puede hacree via Bootstrapping siempre y cuando tengamos los datos, luego concluir
+
+2) Podriamos ayudarnos de la unica cosa poblacional que tenemos (IC para la media, ) y de ahi evaluar la media
+
+3) Dado que tenemos el IC del 95% para la desviacion estandar poblaicional/real, podriamos evualar el comportamiento de vairabilidad respecto al punto medio del IC para la media, y con ello dar respuesta aproximada a la pregunta.
+
+```{r}
+
+#Punto medio del IC de la media poblacional
+
+z1 = x.bar - IC.sigma[2]
+z2 = x.bar + IC.sigma[2]
+
+print(c(z1, z2))
+
+```
+
+Estos valores indician una aproximacion de la variabilidad, a nivel poblacional que tienen los cigarrillos, respecto a su punto de equilibrio. Luego, podemos entonces concluir, a un nivel de confinza del 95% que la cantidad aproximada maxima de nictonia no puede estar debajo de 20mg. 
+
+
+# 2) En un problema de elaboración de envases es
+necesario garantizar que la resistencia mínima que
+tienen un envase de plástico en posición vertical sea
+de 20 kg. Para evaluar esto se obtuvieron los
+siguientes datos mediante pruebas destructivas:
+
+
+
+```{r}
+X = c(28.3, 26.8, 26.6, 26.5, 28.1, 24.8, 27.4, 26.2, 29.4, 28.6, 24.9, 25.2, 30.4, 27.7, 27.0, 26.1, 28.1, 26.9, 28.0, 27.6, 25.6, 29.5, 27.6, 27.3, 26.2, 27.7, 27.2, 25.9, 26.5, 28.3, 26.5, 29.1, 23.7, 29.7, 26.8, 29.5, 28.4, 26.3, 28.1, 28.7, 27.0, 25.5, 26.9, 27.2, 27.6, 25.5, 28.3, 27.4, 28.8, 25.0, 25.3, 27.7, 25.2, 28.6, 27.9, 28.7)
+
+
+```
+
+
+### Punto a)
+
+Esta variable forzosamente tiene que evaluarse mediante
+muestreo y no al 100%, ¿por qué?
+
+R//= Como es un fenomeno aleatorio que involucra pruebas destructivas, se hace necesario estudiar a partir de muestras, es un tema de costo.
+
+
+
+### b) Realice un análisis exploratorio de estos datos (obtenga un
+histograma y vea el comportamientos de los datos
+obtenidos).
+
+```{r}
+
+#Medidas de centralidad
+library(e1071)
+
+media = mean(X)
+mediana = median(X)
+p25 = quantile(X, 0.25)
+p75 = quantile(X, 0.75)
+minimo = min(X)
+maximo = max(X)
+
+MC = rbind(media, mediana, minimo, p25, p75, maximo)
+print(MC)
+
+#Medidas de dispercion
+
+desv.est = sd(X)
+rango = maximo - minimo
+rango.intercuantil = IQR(X)
+MD = rbind(desv.est, rango, rango.intercuantil)
+print(MD)
+#Medidas de Forma
+
+asimetria = skewness(X)
+curtosis = kurtosis(X)
+MF = rbind(asimetria, curtosis)
+print(MF)
+#Graficos
+
+hist(X, main = "Resistencia de envases", xlab = "Resistencia (kgf)", col = "pink")
+
+
+abline(v= media, lty = 2, lwd = 2)
+abline(v= mediana, lty = 2, lwd = 2, col = "blue")
+abline(v= p25, lty = 2, lwd = 2, col = "green4")
+abline(v= p75, lty = 2, lwd = 2, col = "green4")
+
+boxplot(X, main = "Resistencia de envases", xlab = "Resistencia (kgf)", col = "pink", horizontal = T)
+
+
+
+```
+
+
+
+### c) Estime con una confi anza de 95%, ¿cuál es la resistencia
+promedio de los envases?
+
+```{r}
+
+#Por aproximacion normal
+
+n = length(X)
+
+
+#margen de error
+ME = qnorm(1 - (alpha / 2)) * desv.est / sqrt(n)
+
+IC.n = c(media - ME, media + ME)
+
+print(IC.n)
+
+
+```
+
+
+Con una confinza dek 95% (un nivel de significancia del 5%) la resistencai media poblacional/real de los envases estara entre [26.87178 27.62108] kgf.
+
+
+### D) Antes del estudio se suponía que μ = 25. Dada la
+evidencia de los datos, ¿tal supuesto es correcto?
+
+
+
+Dado a un nivel de confiaza del 95% hay evidencia muestral suficiente para rechazar el supuesto. Lo anterior dado que 25 no pertenece al IC
+
+
+
+### E)
+
+Con los datos anteriores, estime con una confianza de 95%
+¿cuál es la desviación estándar poblacional (del proceso)?
+
+
+```{r}
+q1 = qchisq(1- (alpha/2), n - 1)
+
+q2 = qchisq(alpha/2, n - 1)
+
+a = (n - 1) * (desv.est^2) / q1
+
+b = (n - 1) * (desv.est^2) / q2
+
+IC.sigma = sqrt(c(a, b))
+
+print(IC.sigma)
+
+```
+
+
+Con una confianzia del 95% (a un nivel de significancai del 5%) la desviacion estandar poblacional/real de la resistencia de los envases estara entree [1.20597 1.75838] kgf
+
+
+
+# FIN
