@@ -304,6 +304,4 @@ print(IC.sigma)
 
 Con una confianzia del 95% (a un nivel de significancai del 5%) la desviacion estandar poblacional/real de la resistencia de los envases estara entree [1.20597 1.75838] kgf
 
-
-
 # FIN

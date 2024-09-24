@@ -137,7 +137,4 @@ hist(x)
 boxplot(x, horizontal =  T)
 ```
 
-which()
-
-
 
