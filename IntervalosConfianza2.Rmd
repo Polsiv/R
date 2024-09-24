@@ -1,0 +1,95 @@
+---
+title: "IntervalosConfianza2"
+author: "Juan Pablo Silvestre"
+date: "2024-09-24"
+output: pdf_document
+---
+
+# Ejercicio 3
+
+Una caracteristica importante en la calidad de la leche de vaca es la concentracion de grasa. En una industria en particular se fijo como estandar minimo del producto que se recibe directamente de los establos lecheros sea del 3.0%. Por medio de 40 muestreos y evaluaciones en cierta epoca del año se obtuvo que la media muestral es 3.2 y a desviacion estandar es 0.3
+
+```{r}
+
+#Por aproximacion normal
+n = 40
+x.bar = 3.2
+S = 0.3
+alpha = 0.1
+
+#margen de error
+ME.n = qnorm(1 - (alpha / 2)) * S / sqrt(n)
+print(ME.n)
+IC.n = c(x.bar - ME.n, x.bar + ME.n)
+
+print(IC.n)
+
+```
+
+### Punto A
+
+Estime con una confianza de 90% el contenido promedio de grasa poblacional.
+
+Con una confianza de 90%, el porcentaje medio poblacional/real de concentracion de grasa de la leche produdcida de los establos estara entre [3.121978 3.278022] %. Lo que equivale a decir que si se remuestrean 100 intervalos, en 90 de ellos, el porcentaje de concentracion de la leche de vaca esta dentro de [3.121978 3.278022] %, y en 10 de ellos el porcentaje estara por fuera.
+
+
+### Punto B 
+
+¿Cuál es el error máximo de estimación para la media? ¿Por qué?
+
+El error maximo de estimacion para la media es aproximadamente 0.07802226, lo cual es estrecho debido a la desviacion estandar muestral, lo que nos quiere decir que los 40 muestreos de la leche de vaca, presentan poca variabilidad respecto a la concentraicon de grasa.
+
+
+
+### Punto C
+
+Si se quiere estimar la media con un error máximo de 0.05, ¿qué tamaño de muestra se requiere?
+
+
+```{r}
+alpha = 0.1
+ME.ast = 0.05
+
+n.ast = ceiling((qnorm(1 - (alpha/2)) * S / ME.ast)^2)
+print(n.ast)
+
+if (n.ast > n){
+  cat("Son requeridos" , n.ast - n, "nuevos individuos para garantizar un margen de error de", ME.ast, "%")
+} else {
+  cat ("Con", n, "individuos estamos bien")
+}
+
+```
+
+### Punto D
+
+Estime con una confianza de 95%, ¿cuál es la desviación estándar poblacional?
+
+
+```{r}
+alpha = 0.05
+
+q1 = qchisq(1 - alpha / 2, n - 1)
+q2 = qchisq(alpha / 2, n - 1)
+
+a = (n - 1) * (S ^ 2) / q1
+b = (n - 2) * (S ^ 2) / q2
+
+IC.sigma = sqrt(c(a, b))
+
+print(IC.sigma)
+
+
+```
+
+Dado el nivel de confianza del 95%, se determina que el Intervalo de Confianza para la desviacion estandar real/poblacional de concentracion de grasa de la leche produdcida de los establos estara entre [0.2457483 0.3802400]. Con esta informacion podemos afirmar que la calidad de la leche excede los estandares propuestos
+
+
+### Punto F
+
+¿Qué puede decir acerca de la cantidad mínima y máxima de grasa en la leche? ¿Es posible garantizar con suficiente confianza que la leche tiene más de 3.0% de grasa?
+
+
+Se puede concluir que la leche producida cumple los estandares de la industria #mejorar ofc
+
+

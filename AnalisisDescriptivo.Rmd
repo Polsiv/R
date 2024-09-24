@@ -43,16 +43,11 @@ time to analyze (real)
 
 resume patrones de posicionamiento/ localizacion: media, mediana, moda, percentiles, minimo, maximo
 
-
-
-
 media = punto de equilibrio o centro de gravedad de los datos
 
 mediana = individuo mas profundo / representativo o el menos raro
 
-
 p_k: es el individuo  en la posicion k de 100
-
 
 moda = el valor que mas se repite si y solo si si la variable es discreta en un rango especificado
 moda = valor que maximiza la funcion de densisdad de probabilidad (punto modal)
@@ -112,7 +107,7 @@ print(Md)
 
 #ESTADISTICOS DE FORMA
 
-indicador que resume patrones de desplazamiento vertical y horizontal de una muestra aleatoria. Entre eestas tenemos: el coeficiente de asimetria, coeficiente de curtosis
+indicador que resume patrones de desplazamiento vertical y horizontal de una muestra aleatoria. Entre eestas tenemos: el coeficiente de asimetria, coeficiente de curtosis.
 
 
 ```{r}
