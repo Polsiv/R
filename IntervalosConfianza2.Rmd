@@ -7,7 +7,7 @@ output: pdf_document
 
 # Ejercicio 3
 
-Una caracteristica importante en la calidad de la leche de vaca es la concentracion de grasa. En una industria en particular se fijo como estandar minimo del producto que se recibe directamente de los establos lecheros sea del 3.0%. Por medio de 40 muestreos y evaluaciones en cierta epoca del año se obtuvo que la media muestral es 3.2 y a desviacion estandar es 0.3
+Una característica importante en la calidad de la leche de vaca es la concentración de grasa. En una industria en particular se fijo como estandar mínimo del producto que se recibe directamente de los establos lecheros sea del 3.0%. Por medio de 40 muestreos y evaluaciones en cierta época del año se obtuvo que la media muestral es 3.2 y a desviación estándar es 0.3
 
 ```{r}
 
@@ -30,14 +30,14 @@ print(IC.n)
 
 Estime con una confianza de 90% el contenido promedio de grasa poblacional.
 
-Con una confianza de 90%, el porcentaje medio poblacional/real de concentracion de grasa de la leche produdcida de los establos estara entre [3.121978 3.278022] %. Lo que equivale a decir que si se remuestrean 100 intervalos, en 90 de ellos, el porcentaje de concentracion de la leche de vaca esta dentro de [3.121978 3.278022] %, y en 10 de ellos el porcentaje estara por fuera.
+Con una confianza de 90%, el porcentaje medio poblacional/real de concentración de grasa de la leche produdcida de los establos estará entre [3.121978 3.278022] %. Lo que equivale a decir que si se remuestrean 100 intervalos, en 90 de ellos, el porcentaje de concentración de la leche de vaca esta dentro de [3.121978 3.278022] %, y en 10 de ellos, el porcentaje estara por fuera.
 
 
 ### Punto B 
 
 ¿Cuál es el error máximo de estimación para la media? ¿Por qué?
 
-El error maximo de estimacion para la media es aproximadamente 0.07802226, lo cual es estrecho debido a la desviacion estandar muestral, lo que nos quiere decir que los 40 muestreos de la leche de vaca, presentan poca variabilidad respecto a la concentraicon de grasa.
+El error máximo de estimación para la media es aproximadamente 0.07802226, lo cual es estrecho debido a la desviación estándar muestral, lo que nos quiere decir que los 40 muestreos de la leche de vaca, presentan poca variabilidad respecto a la concentraicón de grasa.
 
 
 
@@ -82,14 +82,141 @@ print(IC.sigma)
 
 ```
 
-Dado el nivel de confianza del 95%, se determina que el Intervalo de Confianza para la desviacion estandar real/poblacional de concentracion de grasa de la leche produdcida de los establos estara entre [0.2457483 0.3802400]. Con esta informacion podemos afirmar que la calidad de la leche excede los estandares propuestos
+Dado el nivel de confianza del 95%, se determina que el Intervalo de Confianza para la desviación estandar real/poblacional de concentración de grasa de la leche produdcida de los establos estara entre [0.2457483 0.3802400]. Con esta información podemos afirmar que la calidad de la leche excede los estándares propuestos.
 
 
-### Punto F
+### Punto E
 
 ¿Qué puede decir acerca de la cantidad mínima y máxima de grasa en la leche? ¿Es posible garantizar con suficiente confianza que la leche tiene más de 3.0% de grasa?
 
 
-Se puede concluir que la leche producida cumple los estandares de la industria #mejorar ofc
+Con el rango obtenido por la aproximación estimada al porcentaje medio/real de concentración de grasa de la leche, éste demuestra que la leche satisface los estándares propuestos por la industria. A su vez, debido al nivel de confianza establecido, que respecta al 95%, es suficiente para garantizar con confinaza que la leche tiene mas del 3.0% de grasa.
+
+
+# Ejercicio 4 
+
+En una auditoria se seleccionan de manera aleatoria 200 facturas de las compras realizadas durante el año, y se encuentra que 10 de ellas tienen algun tipo de anomalia.
+
+Donde:
+
+- \( n \): tamaño de la muestra.
+- \( p \): probabilidad de ocurrencia de un evento (llamada éxito).
+
+Lo que nos queda:
+
+\[
+n = 200
+\]
+\[
+p = \frac{10}{200} = 0.05
+\]
+\[
+
+
+```{r}
+p.gorro = 0.05
+n = 200
+alpha = 0.05
+
+ME = qnorm(1 - (alpha / 2)) * sqrt(p.gorro * (1 - p.gorro) / n)
+IC = c(p.gorro - ME, p.gorro + ME)
+print(ME)
+print(IC)
+```
+
+### Punto A
+
+Estime con una confianza de 95% el porcentaje de facturas con anomalías en todas las compras del año.
+
+Con una confianza de 95%, el porcentaje medio poblacional/real de facturas con anomalías en todas las compras del año está entre [0.01979493 0.08020507] * 100 %.
+
+### Punto B
+
+¿Cuál es el error de estimación? ¿Por qué?
+
+El error de estimacion definido como ME, da como resultado 0.03020507, 
+
+### Punto C
+
+¿Qué tamaño de muestra se tiene que usar si se quiere estimar el porcentaje de facturas con anomalías con un error máximo de 2%
+ 
+```{r}
+
+ME.ast = 0.02
+n.ast = ceiling((qnorm(1 - alpha / 2) / ME.ast)^2 * p.gorro * (1 - p.gorro))
+
+if (n.ast > n){
+  cat("Se requieren", n.ast - n, "nuevos individuos para garantizar un margen de error de", ME.ast, "%")
+} else {
+  cat ("Con", n, "individuos estamos bien")
+}
+
+```
+
+# Ejercicio 5
+
+En la producción de una planta se está evaluando un tratamiento para hacer que germine cierta semilla. De un total de 60 semillas se observó que 37 de ellas germinaron.
+
+
+\[
+n = 60
+\]
+\[
+p = \frac{37}{60} = 0.6167 
+\]
+
+```{r}
+
+p.gorro = 0.6167
+n = 60
+alpha = 0.10
+
+ME = qnorm(1 - (alpha / 2)) * sqrt(p.gorro * (1 - p.gorro) / n)
+IC = c(p.gorro - ME, p.gorro + ME)
+print(ME)
+print(IC)
+
+```
+### Punto A
+
+Estime con una confianza de 90% la proporción de germinación que se logrará con tal tratamiento.
+
+
+Con un nivel de confianza del 90%, la proporcion poblacional/real de semillas que germinarán con este tratamiento estará entre [51.34 71.99] %.
+
+
+### Punto B
+
+Con una confianza de 90%, ¿es posible garantizar que la mayoría (más de la mitad) de las semillas germinarán?
+
+Debido a que el intervalo de confianza esta por encima del 50%, y con un nivel de confianza del 90%, es posible garantizar que la mayoría de las semillas germinarán.
+
+
+### Punto C
+
+Conteste los dos incisos anteriores pero ahora con 95% de confianza.
+
+
+```{r}
+p.gorro = 0.6167
+n = 60
+alpha = 0.05
+
+ME = qnorm(1 - (alpha / 2)) * sqrt(p.gorro * (1 - p.gorro) / n)
+IC = c(p.gorro - ME, p.gorro + ME)
+print(ME)
+print(IC)
+```
+
+#### C1
+
+Con un nivel de confianza del 95%, la proporcion poblacional/real de semillas que germinarán con este tratamiento estará entre [49.36 73.97] %.
+
+
+#### C2
+
+Con una confianza de 90%, ¿es posible garantizar que la mayoría (más de la mitad) de las semillas germinarán?
+
+Aunque el intervalo no está por encima del 50%, su límite inferior está muy cercano a este porcentaje, de igual forma el límite superior es cercano al 75%; y con un nivel de confianza del 95%, es posible garantizar que la mayoría de las semillas germinarán.
 
 
