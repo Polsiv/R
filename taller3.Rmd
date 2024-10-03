@@ -158,7 +158,7 @@ print(ME)
 print(IC)
 ```
 
-Dado el nivel de confianza del 99%, el la proporcion media/real que de las personas que apoya la ley es del [56.35 63.64] %.
+Dado el nivel de confianza del 99%, el la proporcion media/real de las personas que apoyan la ley es [56.35 63.64] %.
 
 
 
