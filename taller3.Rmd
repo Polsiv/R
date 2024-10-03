@@ -98,8 +98,7 @@ cat("El tamaño mínimo de la muestra para realizar la estimacion (eror maximo d
 
 ```
 
-Si luego de recolectar los datos se obtiene una muestra con los siguientes ingresos (en miles de
-dólares), calcula el intervalo de confianza del 95 % para la media:
+Si luego de recolectar los datos se obtiene una muestra con los siguientes ingresos (en miles de dólares), calcula el intervalo de confianza del 95 % para la media:
 
 ```{r}
 data = c(38.5, 42.1, 40.3, 37.8, 45.6, 41.2, 39.7, 43.5, 40.0, 39.8, 38.9, 44.1, 40.6, 37.9, 41.7, 42.5, 39.1, 40.9, 41.4, 43.0)
@@ -118,5 +117,49 @@ cat("El intervalo de confianza es:", IC, " dolares\n")
 
 ```
 
-Dado el nivel de fianza del 95%, el ingreso promedio poblacional/real de una region estara entre [40008.6 41851.4] dolares.
+Dado el nivel de confianza del 95%, el ingreso promedio poblacional/real de una region estara entre [40008.6 41851.4] dolares.
+
+
+# Punto 5
+
+Un instituto de investigación está realizando un estudio para determinar la proporción de personas que apoyan una nueva ley de protección ambiental. En un estudio piloto, se entrevistó a 150 personas y 75 de ellas se mostraron a favor de la ley. 
+
+El instituto desea ahora realizar una encuesta más grande con un margen de error del 2 % y un nivel de confianza del 99 %. ¿Cuál debería ser el tamaño mínimo de la muestra para la nueva encuesta?
+
+
+```{r}
+
+alpha = 0.01
+p.gorro = 75 / 150
+n = 150
+me.ast = 0.02 
+
+n.ast = ceiling( (qnorm(1 - alpha / 2) / me.ast) ^ 2 * p.gorro * (1 - p.gorro))
+
+cat("El tamaño minimo de la muestra debe ser:", n.ast)
+
+
+
+
+```
+
+Una vez que se ha recolectado una muestra de 1,200 personas, de las cuales 720 apoyan la ley, calcula el intervalo de confianza del 99 % para la proporción de apoyo a la ley.
+
+```{r}
+
+alpha = 0.01
+p.gorro = 720 / 1200
+n = 1200
+
+ME = qnorm(1 - alpha / 2) * sqrt((p.gorro * (1 - p.gorro)) / n)
+IC = c(p.gorro - ME, p.gorro + ME)
+
+print(ME)
+print(IC)
+```
+
+Dado el nivel de confianza del 99%, el la proporcion media/real que de las personas que apoya la ley es del [56.35 63.64] %.
+
+
+
 
