@@ -158,8 +158,42 @@ print(ME)
 print(IC)
 ```
 
-Dado el nivel de confianza del 99%, el la proporcion media/real de las personas que apoyan la ley es [56.35 63.64] %.
+Dado el nivel de confianza del 99%, la proporcion real/poblacional de las personas que apoyan la ley es [56.35 63.64] %.
 
 
+# Punto 6
+
+Una empresa farmacéutica está probando la efectividad de un nuevo medicamento para reducir el colesterol en personas mayores de 50 años. Se seleccionaron 50 personas que tomaron el medicamento durante 6 meses, y se registraron las siguientes reducciones en los niveles de colesterol (en mg/dL):
+
+```{r}
+data = c(
+18, 25, 22, 19, 30, 27, 20, 28, 23, 21, 24, 26, 31, 19, 29, 21, 22, 27, 25, 20,
+23, 28, 24, 19, 30, 26, 27, 22, 21, 29, 18, 31, 25, 20, 23, 19, 27, 22, 24, 28,
+26, 20, 23, 21, 29, 24, 19, 30, 22, 28)
+
+```
+
+Asumiendo que las reducciones siguen una distribución normal, calcula el intervalo de confianza del 95 % para la media de la reducción de colesterol.
+
+```{r}
+
+#Intervalo de Confianza por aproximacion normal
+
+alpha = 0.05
+n = length(data)
+x.bar = mean(data)
+S = sd(data)
+
+#margen de error
+me.n = qnorm(1 - (alpha / 2)) * S / sqrt(n)
+
+IC.n = c(x.bar - me.n, x.bar + me.n)
+
+print(IC.n)
+
+```
+
+
+Dado el nivel de confianza del 95%, la media/real de la reduccion de colesterol en personas mayores de 50 años que tomen el medicamento durante 6 meses, estara entre [23.04008 25.15992] mg/dL.
 
 
