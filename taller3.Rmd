@@ -1,0 +1,122 @@
+---
+title: "taller 2"
+author: "Juan Pablo Silvestre"
+date: "2024-10-03"
+output: pdf_document
+---
+
+---
+title: "Inferencia Estadistica"
+author: "Sebastián López Montenegro (97500) - Juan Pablo Silvestre (99127)"
+date: "2024-09-24"
+output:
+  html_document: default
+  pdf_document: default
+subtitle: Talller 1 Corte 2
+---
+# Punto 2
+## Funcion para calcular el intervalo de confianza (Proporcion)
+Como se requiere hace rel calculo del intervalo de confianza para varias ciudades, primero se creará una funcion para usar con respecto a los datos de cada ciudad
+```{r}
+calcularIntervaloP=function(n,c,alpha=0.02){
+pg=c/n
+cota=qnorm(1-(alpha/2))*sqrt(pg*(1-pg)/n)
+cotSup=pg+cota
+cotInf=pg-cota
+
+cat("Intervalo de confianza: [",cotInf,",",cotSup,"], con una confianza de",(1-alpha)*100,"%")
+}
+```
+En esta funcion se calcula el valor de pg ($\hat{p}$) y luego se halla el margen de error para las cotas del intervalo teniendo en cuenta que para este caso el intervalo sigue: 
+
+\[
+P \rightarrow \left[ \hat{p}-Z_{(1-\alpha/2)}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}},\hat{p}+Z_{(1-\alpha/2)}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \right]
+\]
+
+## Calculo intervalos de confianza
+### Ciudad A
+```{r}
+n=500
+CS=320
+calcularIntervaloP(n,CS)
+```
+### Ciudad B
+```{r}
+n=600
+CS=410
+calcularIntervaloP(n,CS)
+```
+### Ciudad C
+```{r}
+n=300
+CS=150
+calcularIntervaloP(n,CS)
+```
+
+#### Conclusion
+Para una confianza de 98% se concluyo qué:
+Para responder a la pregunta se debe observar qué la ciudad A toma un intervalo [0.59 , 0.68] y la ciudad C toma el intervalo [0.43,0.56], por lo cual se podria hacer la suposicion de que existe una diferencia notoria ya que están separados, prueba de esto es que si realiza la interseccion de ambos intervalos esta será nula ó vacia, esto tiene sentido incluso si se mira qué en las proporciones de las ciudades, la ciudad A tiene mas de la mitad de clientes satisfechos, mientras que en la C son solo la mitad de clientes satifechos. En el mejor de los casos para que la direfencia sea la minima, seria que en la ciudad A tuviese una satisfaccion de 0.59 y la ciudad C una satisfaccion de 0.56, teniendo entonces solo un 3% de diferencia, aproximadamente.
+
+# Punto 3
+## Datos
+Se creará un vector con los datos de las pruebas de resistencia realizadas.
+```{r}
+pruebas=c(78.4, 80.2, 79.0, 77.5, 81.6, 79.8, 82.0, 80.5, 79.2, 78.1,
+77.9, 80.3, 81.1, 79.5, 80.9, 77.8, 78.6, 80.7, 81.4, 82.1,
+79.3, 78.9, 79.4, 77.6, 80.0, 81.8, 79.6, 80.4, 78.0, 82.3)
+```
+
+```{r}
+n=length(pruebas)
+alpha=0.1
+desv.est=sd(pruebas)
+
+q1=qchisq(1-(alpha/2),n-1)
+q2=qchisq(alpha/2,n-1)
+a=(n-1)*(desv.est**2)/q1
+b=(n-1)*(desv.est**2)/q2
+cat("Intervalo de confianza: [",a,",",b,"], con una confianza de",(1-alpha)*100,"%")
+```
+con una confianza del 90% la varianza real de la resistencia de los envases estará entre [1.42 , 3.43] megapascales cuadrados.Se puede identificar que en el mejor de los casos tiene una ligera variabilidad, sin embargo, se hará enfasis en el peor de los casos. La vairanza en el peor de los casos es 3.43 lo que su pone una varianza más significativa, si esta variabilidad está dentro de los limites para los que se requiera usar el material se podria usar estas aleaciones, en caso contrario, si se requiere mas uniformidad en los materiales se debe estar preocupado por mejorar en calidad para que la resistencia sea mas homogenea.
+
+
+
+# Punto 4
+
+Se desea estimar el ingreso promedio de los habitantes de una región para desarrollar un programa de apoyo económico. A partir de un estudio preliminar, se estima que la desviación estándar del ingreso es de 4,500 dolares. El gobierno quiere que el intervalo de confianza del 95 % tenga un error máximo de 500 dolares. ¿Cuál debe ser el tamaño mínimo de la muestra para realizar esta estimación?
+
+
+```{r}
+#Data
+
+S = 4500  
+alpha = 0.05
+ME.ast = 500
+
+n.ast = ceiling((qnorm(1 - (alpha / 2)) * S / ME.ast)^2)
+cat("El tamaño mínimo de la muestra para realizar la estimacion (eror maximo de 500 dolares) es de:", n.ast, "\n")
+
+```
+
+Si luego de recolectar los datos se obtiene una muestra con los siguientes ingresos (en miles de
+dólares), calcula el intervalo de confianza del 95 % para la media:
+
+```{r}
+data = c(38.5, 42.1, 40.3, 37.8, 45.6, 41.2, 39.7, 43.5, 40.0, 39.8, 38.9, 44.1, 40.6, 37.9, 41.7, 42.5, 39.1, 40.9, 41.4, 43.0)
+media = mean(data) 
+n = length(data)
+
+S_data
+
+ME = qnorm(1 - (alpha / 2)) * S_data / sqrt(n)
+
+IC = c(media - ME, media + ME) * 1000
+
+
+cat("El intervalo de confianza es:", IC, " dolares\n")
+
+
+```
+
+Dado el nivel de fianza del 95%, el ingreso promedio poblacional/real de una region estara entre [40008.6 41851.4] dolares.
+
