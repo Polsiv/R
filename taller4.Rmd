@@ -7,7 +7,7 @@ output: html_document
 
 # Punto 1
 
-Para este ejercicio, se requiere hallar el intervalo de confianza para la media real/poblacional; debido a que el tamaño de la muestra es menor a 25, y aque además, la desviación estándar es desconocida, se calculará el intervalo de confianza por aproximación t-student.
+Para este ejercicio, se requiere hallar el intervalo de confianza para la media real/poblacional; debido a que el tamaño de la muestra es menor a 25, además que, la desviación estándar es desconocida, se calculará el intervalo de confianza por aproximación t-student.
 
 ```{r}
 #Se toman estos 3 datos ya que son la media del tiempo de resolucion en problemas con 2 componentes afectados.
