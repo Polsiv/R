@@ -1,39 +1,108 @@
 ---
-title: "taller 2"
-author: "Juan Pablo Silvestre"
-date: "2024-10-03"
-output: pdf_document
----
-
----
-title: "Inferencia Estadistica"
+title: "Inferencia Estadística"
 author: "Sebastián López Montenegro (97500) - Juan Pablo Silvestre (99127)"
 date: "2024-09-24"
 output:
-  html_document: default
   pdf_document: default
+  html_document: default
 subtitle: Talller 1 Corte 2
 ---
+
+# Punto 1
+
+Un estudio de una empresa de software monitorea el tiempo en minutos que tardan los empleados en resolver un problema técnico utilizando una nueva plataforma. El tiempo de resolución \( t \) sigue una distribución normal y depende de la complejidad del problema. Se propone que la complejidad del problema está relacionada con una variable \(x \) que mide el número de componentes afectados en el sistema, y que el tiempo de resolución se modela como:
+
+$$
+t(x) = 12 + 3x + \epsilon
+$$
+
+Donde \( \epsilon \) es un término de error normalmente distribuido con media cero y desviación estándar desconocida. Se registraron los siguientes tiempos de resolución para problemas con distintos niveles de complejidad \(x\):
+
+\begin{table}[h]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+\( x \) & \textbf{Tiempo (min)} \\ \hline
+1 & 15 \\ \hline
+2 & 18 \\ \hline
+3 & 22 \\ \hline
+1 & 14 \\ \hline
+3 & 24 \\ \hline
+2 & 19 \\ \hline
+1 & 13 \\ \hline
+2 & 20 \\ \hline
+3 & 21 \\ \hline
+\end{tabular}
+\end{table}
+
+Con estos datos, estima un intervalo de confianza del \(95%\) para la media del tiempo de resolución en problemas con \(2\) componentes afectados \((x = 2)\)
+
+## Definición de parametros necesarios
+Se requiere hacer el cálculo de el intervalo de confianza, sin embargo, en este caso contamos con que el número de elementos es menor a 25 y tampoco se conoce la desviación estandar, por lo que se debe hacer la aproximación del intervalo con t-student.
+
+```{r}
+datos=c(18,19,20)
+n=length(datos)
+alpha=0.05
+x.bar=mean(datos)
+s=sd(datos)
+```
+
+Se definieron las variables: datos (conjunto de datos donde \(x = 2\)), \(n\) (tamaño de la muestra), \(\alpha = 0.05\) (nivel de significancia del 5\%), \(\bar{x}\) (media muestral de los datos) y \(S\) (desviación estándar de los datos).
+
+
+```{r}
+
+ME.t=qt(1-(alpha/2),n-1)*s/sqrt(n)
+ic.t=c(x.bar-ME.t,x.bar+ME.t)
+cat("Intervalo de confianza: [",ic.t,"] minutos con una confianza de",(1-alpha)*100,"%")
+```
+
+Luego de calcular el margen de error, se halla intervalo de confianza, esto siguiendo las siguientes formulas:
+
+##### Fórmula Margen de Error
+\[
+ME \rightarrow \frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}}
+\]
+
+##### Fórmula Intervalo de confianza (para $\mu$)
+
+\[
+\mu \rightarrow \left[ \bar{x}-\frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}},\bar{x}+\frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}} \right]
+\]
+
+Con un nivel de confianza del 95% (con un nivel de significancia del 5%) hay evidencia muestral suficiente para determinar el IC para la media real/poblacional del tiempo que toma resolver problemas con complejidad 2, en minutos. Este intervalo será [16.5158 21.4841] Minutos. 
+
 # Punto 2
-## Funcion para calcular el intervalo de confianza (Proporcion)
-Como se requiere hace rel calculo del intervalo de confianza para varias ciudades, primero se creará una funcion para usar con respecto a los datos de cada ciudad
+
+Una compañía de telecomunicaciones realiza una encuesta para conocer la satisfacción de sus clientes con el servicio de Internet en diferentes ciudades. La encuesta se realizó en tres ciudades con las siguientes proporciones de clientes satisfechos:
+
+- Ciudad A: 320 de 500 clientes satisfechos.
+- Ciudad B: 410 de 600 clientes satisfechos.
+- Ciudad C: 150 de 300 clientes satisfechos.
+
+Se desea calcular el intervalo de confianza del 98% para la proporción de clientes satisfechos en cada una de las ciudades. Además, ¿es posible concluir que existe una diferencia estadísticamente significativa entre la satisfacción en la Ciudad A y la Ciudad C?
+
+## Función para calcular el intervalo de confianza (Proporción)
+Como se requiere hacer el cálculo del intervalo de confianza para varias ciudades, primero se creará una función para usar con respecto a los datos de cada ciudad
+
 ```{r}
 calcularIntervaloP=function(n,c,alpha=0.02){
-pg=c/n
-cota=qnorm(1-(alpha/2))*sqrt(pg*(1-pg)/n)
-cotSup=pg+cota
-cotInf=pg-cota
-
-cat("Intervalo de confianza: [",cotInf,",",cotSup,"], con una confianza de",(1-alpha)*100,"%")
+  pg=c/n
+  cota=qnorm(1-(alpha/2))*sqrt(pg*(1-pg)/n)
+  cotSup=pg+cota
+  cotInf=pg-cota
+  cat("Intervalo de confianza: [",cotInf,",",cotSup,"], con una confianza de",(1-alpha)*100,"%")
 }
 ```
-En esta funcion se calcula el valor de pg ($\hat{p}$) y luego se halla el margen de error para las cotas del intervalo teniendo en cuenta que para este caso el intervalo sigue: 
+En esta función se calcula el valor de pg ($\hat{p}$) y luego se halla el margen de error para las cotas del intervalo teniendo en cuenta que para este caso el intervalo sigue la fórmula: 
 
+##### Fórmula Intervalo de confianza (Proporción)
 \[
 P \rightarrow \left[ \hat{p}-Z_{(1-\alpha/2)}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}},\hat{p}+Z_{(1-\alpha/2)}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \right]
 \]
 
-## Calculo intervalos de confianza
+## Cálculo intervalos de confianza
 ### Ciudad A
 ```{r}
 n=500
@@ -53,9 +122,10 @@ CS=150
 calcularIntervaloP(n,CS)
 ```
 
-#### Conclusion
-Para una confianza de 98% se concluyo qué:
-Para responder a la pregunta se debe observar qué la ciudad A toma un intervalo [0.59 , 0.68] y la ciudad C toma el intervalo [0.43,0.56], por lo cual se podria hacer la suposicion de que existe una diferencia notoria ya que están separados, prueba de esto es que si realiza la interseccion de ambos intervalos esta será nula ó vacia, esto tiene sentido incluso si se mira qué en las proporciones de las ciudades, la ciudad A tiene mas de la mitad de clientes satisfechos, mientras que en la C son solo la mitad de clientes satifechos. En el mejor de los casos para que la direfencia sea la minima, seria que en la ciudad A tuviese una satisfaccion de 0.59 y la ciudad C una satisfaccion de 0.56, teniendo entonces solo un 3% de diferencia, aproximadamente.
+#### Conclusión
+Para una confianza de 98% se concluyó que:
+
+Para responder a la pregunta se debe observar qué la ciudad A toma un intervalo [0.59 , 0.68] y la ciudad C toma el intervalo [0.43,0.56], por lo cual se puede suponer que existe una diferencia notoria ya que están separados, prueba de esto es que si se realiza la intersección de ambos intervalos esta será nula ó vacía, esto tiene sentido incluso si se mira que en las proporciones de las ciudades, la ciudad A tiene más de la mitad de clientes satisfechos, mientras que en la C son sólo la mitad de clientes satifechos. En el mejor de los casos para que la direfencia sea la minima, sería que en la ciudad A tuviese una satisfacción de 0.59 y la ciudad C una satisfacción de 0.56, teniendo entonces solo un 3% de diferencia, aproximadamente.
 
 # Punto 3
 ## Datos
@@ -77,73 +147,94 @@ a=(n-1)*(desv.est**2)/q1
 b=(n-1)*(desv.est**2)/q2
 cat("Intervalo de confianza: [",a,",",b,"], con una confianza de",(1-alpha)*100,"%")
 ```
-con una confianza del 90% la varianza real de la resistencia de los envases estará entre [1.42 , 3.43] megapascales cuadrados.Se puede identificar que en el mejor de los casos tiene una ligera variabilidad, sin embargo, se hará enfasis en el peor de los casos. La vairanza en el peor de los casos es 3.43 lo que su pone una varianza más significativa, si esta variabilidad está dentro de los limites para los que se requiera usar el material se podria usar estas aleaciones, en caso contrario, si se requiere mas uniformidad en los materiales se debe estar preocupado por mejorar en calidad para que la resistencia sea mas homogenea.
 
+##### Fórmula Intervalo de Confianza (Varianza)
+
+\[
+\sigma^{2} \rightarrow \left[ \frac{(n-1)\hat{\sigma}^{2}}{X_{(\alpha/2,n-1)}^2}, \frac{(n-1)\hat{\sigma}^{2}}{X_{(1-\alpha/2,n-1)}^2} \right]
+\]
+
+\vspace{20pt}
+
+Con una confianza del 90% la varianza real de la resistencia de los envases estará entre [1.42 , 3.43] megapascales cuadrados. Se puede identificar que en el mejor de los casos tiene una ligera variabilidad, sin embargo, se hará énfasis en el peor de los casos. La vairanza en el peor de los casos es 3.43 lo que su pone una varianza más significativa, si esta variabilidad está dentro de los límites para los que se requiera usar el material se podría usar estas aleaciones, en caso contrario, si se requiere mas uniformidad en los materiales se debe estar preocupado por mejorar en calidad para que la resistencia sea más homogénea.
 
 
 # Punto 4
 
 Se desea estimar el ingreso promedio de los habitantes de una región para desarrollar un programa de apoyo económico. A partir de un estudio preliminar, se estima que la desviación estándar del ingreso es de 4,500 dolares. El gobierno quiere que el intervalo de confianza del 95 % tenga un error máximo de 500 dolares. ¿Cuál debe ser el tamaño mínimo de la muestra para realizar esta estimación?
 
-
+## Datos
 ```{r}
-#Data
 
 S = 4500  
 alpha = 0.05
 ME.ast = 500
 
 n.ast = ceiling((qnorm(1 - (alpha / 2)) * S / ME.ast)^2)
-cat("El tamaño mínimo de la muestra para realizar la estimacion (eror maximo de 500 dolares) es de:", n.ast, "\n")
+cat("El tamaño mínimo de la muestra para realizar la estimación 
+    (error máximo de 500 dólares) es de:", n.ast, "\n")
 
 ```
+
+##### Fórmula después de despejar para \(n\) ($\mu$)
+\[
+n = \left(\frac{z_{(1-\alpha/2)}\sigma}{ME}\right)^2
+\]
 
 Si luego de recolectar los datos se obtiene una muestra con los siguientes ingresos (en miles de dólares), calcula el intervalo de confianza del 95 % para la media:
 
 ```{r}
-data = c(38.5, 42.1, 40.3, 37.8, 45.6, 41.2, 39.7, 43.5, 40.0, 39.8, 38.9, 44.1, 40.6, 37.9, 41.7, 42.5, 39.1, 40.9, 41.4, 43.0)
+data = c(38.5, 42.1, 40.3, 37.8, 45.6, 41.2, 39.7, 43.5, 40.0, 
+         39.8, 38.9, 44.1, 40.6, 37.9, 41.7, 42.5, 39.1, 40.9, 41.4, 43.0)
 media = mean(data) 
 n = length(data)
 
-S_data
+S_data=sd(data)
 
 ME = qnorm(1 - (alpha / 2)) * S_data / sqrt(n)
 
-IC = c(media - ME, media + ME) * 1000
+IC = c(media - ME, media + ME)
 
 
-cat("El intervalo de confianza es:", IC, " dolares\n")
+cat("El intervalo de confianza es: [", IC, "] (En miles de
+dólares)")
 
 
 ```
 
-Dado el nivel de confianza del 95%, el ingreso promedio poblacional/real de una region estara entre [40008.6 41851.4] dolares.
+##### Fórmula Intervalo de Confianza ($\mu$)
+\[
+\mu \rightarrow \left[ \bar{x}-\frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}},\bar{x}+\frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}} \right]
+\]
+
+Dado el nivel de confianza del 95% (nivel de significancia del 5%), el ingreso promedio poblacional/real de la región encuestada estará entre [40.0086 41.8514] miles de dólares.
 
 
 # Punto 5
 
 Un instituto de investigación está realizando un estudio para determinar la proporción de personas que apoyan una nueva ley de protección ambiental. En un estudio piloto, se entrevistó a 150 personas y 75 de ellas se mostraron a favor de la ley. 
 
-El instituto desea ahora realizar una encuesta más grande con un margen de error del 2 % y un nivel de confianza del 99 %. ¿Cuál debería ser el tamaño mínimo de la muestra para la nueva encuesta?
+El instituto desea ahora realizar una encuesta más grande con un margen de error del 2% y un nivel de confianza del 99%. ¿Cuál debería ser el tamaño mínimo de la muestra para la nueva encuesta?
 
 
+## Datos
 ```{r}
-
 alpha = 0.01
 p.gorro = 75 / 150
 n = 150
 me.ast = 0.02 
 
-n.ast = ceiling( (qnorm(1 - alpha / 2) / me.ast) ^ 2 * p.gorro * (1 - p.gorro))
+n.ast = ceiling( p.gorro * (1 - p.gorro) * (qnorm(1 - alpha / 2) / me.ast) ^ 2 )
 
 cat("El tamaño minimo de la muestra debe ser:", n.ast)
-
-
-
-
 ```
 
-Una vez que se ha recolectado una muestra de 1,200 personas, de las cuales 720 apoyan la ley, calcula el intervalo de confianza del 99 % para la proporción de apoyo a la ley.
+##### Fórmula después de despejar para \(n\)(Proporción)
+\[
+n = \hat{p}(1-\hat{p})\left(\frac{z_{(1-\alpha/2)}}{ME}\right)^2
+\]
+
+Una vez que se ha recolectado una muestra de 1200 personas, de las cuales 720 apoyan la ley, calcula el intervalo de confianza del 99 % para la proporción de apoyo a la ley.
 
 ```{r}
 
@@ -158,13 +249,20 @@ print(ME)
 print(IC)
 ```
 
-Dado el nivel de confianza del 99%, la proporcion real/poblacional de las personas que apoyan la ley es [56.35 63.64] %.
+##### Fórmula Intervalo de Confianza (Proporción) 
+\[
+P \rightarrow \left[ \hat{p}-Z_{(1-\alpha/2)}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}},\hat{p}+Z_{(1-\alpha/2)}\sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \right]
+\]
+
+Dado el nivel de confianza del 99% (nivel significancia del 1%), la proporción real/poblacional de las personas que apoyan la ley es [56.35 63.64] %. Esto significa que hay evidencia suficiente para afirmar que más del 50% de las personas apoyan la ley.
 
 
 # Punto 6
 
 Una empresa farmacéutica está probando la efectividad de un nuevo medicamento para reducir el colesterol en personas mayores de 50 años. Se seleccionaron 50 personas que tomaron el medicamento durante 6 meses, y se registraron las siguientes reducciones en los niveles de colesterol (en mg/dL):
 
+
+## Datos
 ```{r}
 data = c(
 18, 25, 22, 19, 30, 27, 20, 28, 23, 21, 24, 26, 31, 19, 29, 21, 22, 27, 25, 20,
@@ -193,7 +291,9 @@ print(IC.n)
 
 ```
 
+##### Fórmula Intervalo de Confianza ($\mu$)
+\[
+\mu \rightarrow \left[ \bar{x}-\frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}},\bar{x}+\frac{t_{(1-\alpha/2)}\hat{\sigma}}{\sqrt{n}} \right]
+\]
 
-Dado el nivel de confianza del 95%, la media/real de la reduccion de colesterol en personas mayores de 50 años que tomen el medicamento durante 6 meses, estara entre [23.04008 25.15992] mg/dL.
-
-
+Dado el nivel de confianza del 95% (nivel de significancia del 5%), la media/real de la reducción de colesterol en personas mayores de 50 años que tomen el medicamento durante 6 meses, estará entre [23.04008 25.15992] mg/dL, esta información es utilizada para concluir que la empresa farmacéutica logró que el medicamento sea efectivo.
