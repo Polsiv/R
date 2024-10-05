@@ -1,0 +1,192 @@
+---
+title: "One sample t-test"
+author: "Silv"
+date: "2024-10-02"
+output: pdf_document
+---
+
+Veremos 2 formas de hacerla: 1) cuando se tiene  el vector de datos, 2) cuando so,o tenemos informacion de la muestra
+
+Dependiendo del caso en el que nos encontremos puede ser mas rapido ejecutar la prueba. En el caso 1) es sufuciente con usar la fucnion de R "t.test"; en el caso 2) debemos programar la prueba (definir el tipo, calcular el estadisitico de prueba y definir la decision a partir del p-value).
+
+
+
+## Ejercicio 1
+Resistencia de Materiales
+Una fábrica produce barras de acero que deben tener una resistencia media de 25 MPa para cumplir con los estándares de seguridad. Se toman 10 muestras aleatorias y las resistencias medidas en MPa son las siguientes:
+
+```{r}
+#data
+
+x = c(23, 25, 28, 22, 26, 24, 27, 29, 21, 30)
+```
+
+¿Puede la fábrica afirmar que la resistencia media de sus barras cumple con el estándar de 25
+MPa? Realiza una prueba de hipótesis con un nivel de significancia del 5 %.
+
+
+### Solucion
+
+1) segun la informacion del enunciado, tenemos los datos, es decir, podemos decur la prueba con la function t.test(). Esta prueba es bilateral, luego las hipotesis son: 
+
+Ho: Resistencia media real de las barras sea = 25MPa (mu = 25)
+Ha: Resistencia media real de las barras sea != 25MPa (mu != 25)
+
+
+
+```{r}
+#Ejecucion de la prueba
+mu.cero = 25
+alpha = 0.05
+t.test(x, alternative = "two.sided", mu = mu.cero, conf.level = 1 - alpha)
+
+media = mean(x)
+
+t = sqrt(length(x)) * (media - mu.cero) / sd(x)
+
+print(t)
+  
+#si |t| < 2, pi.vaue < alpha
+#DF degrees- of freedom, t-student con grado de libertad n - 1 = 10 - 1 = 9
+
+```
+
+
+De acuerdo a la prueba, podemos concluir que el p-value = 0.6141 no es menor que alpha = 0.05, por lo tanto no se rechaza Ho. Luego, con una confianza del 95% (significancia del 5%) NO hay evidencia muestral suficiente para rechazar la hipotesis de que la tension  media real/poblacional de las barrassea igual 25MPa.
+
+
+
+
+### Ejercicio #3
+
+Dureza de Aleaciones
+Una compañía de manufactura está probando una nueva aleación. Para que la aleación sea
+viable, su dureza debe ser mayor a 32 HRC (Rockwell Hardness). Se toman 10 muestras, con
+los siguientes resultados en la dureza:
+
+```{r}
+x = c(31, 35, 29, 33, 30, 34, 32, 36, 28, 37)
+```
+
+¿Puede la empresa concluir que la dureza media de la aleación es mayor a 32 HRC? Realiza
+una prueba de hipótesis con un nivel de significancia del 5 %
+
+1) segun la informacion del enunciado, tenemos los datos, es decir, podemos decur la prueba con la function t.test(). Esta prueba es bilateral, luego las hipotesis son: 
+
+
+Ho: Dureza media real de la alaeacion <= 32 HRC (mu <= 32)
+Ha: Resistencia media real de las barras sea >= 32 HRC (mu > 32)
+
+Prueba cola derecha
+
+```{r}
+#ejecucion de la prueba
+
+mu.cero = 32
+alpha = 0.05
+
+t.test(x, alternative = "greater", mu = mu.cero, conf.level = 1 - alpha)
+
+media = mean(x)
+
+t = sqrt(length(x)) * (media - mu.cero) / sd(x)
+
+print(t)
+
+```
+
+
+Conclusion: De acuerdo a la prueba tenemos un p-value = 0.3071 que no es menor ni pequeno respecto a alpha = 0.05. Por lo tanto, con una confianza del 95% (nivel de significancia del 5%)
+No hay evidencia muestra sufieiciente para rechazar la hipotesis nula de que la diureza media real/poblacional de las aleaciones sea menor o igual a 32HRC
+
+
+
+### Ejercicio 5
+Consumo de Energía
+Un sistema de refrigeración en una planta industrial tiene un consumo energético esperado de
+20 kWh por día. Se toma una muestra de 20 días, y se encuentra que el consumo promedio es
+de 18.7 kWh, con una desviación estándar de 2.8 kWh.
+¿Hay evidencia suficiente para concluir que el consumo energético promedio es menor que 20
+kWh? Realiza una prueba de hipótesis con un nivel de significancia del 5 %
+
+
+
+### Solucion
+
+1) segun la informacion del enunciado, no tenemos los datos, es decir, debemos programar la prueba. Esta prueba es de cola izquierda
+
+Ho: Consumo energetico medio/real del sistema de refrigeriacion >= 20kwh (mu >= 20)
+Ha: Consumo energetico medio/real del sistema de refrigeriacion < 20kwh (mu < 20)
+
+```{r}
+#Programando la prueba
+
+#Funcio one sample t-stest
+
+
+t.test2 =  function(n, x.bar, s, mu.cero, alpha, cola){
+  
+  t0 = sqrt(n) * (x.bar - mu.cero) / s
+  
+  if (cola == "izquierda"){
+    t.alpha = qt(alpha, n - 1)
+    p.value = pt(t0, n-1)
+    
+    if (t0 <= t.alpha){
+      cat("Se rechaza H0, con un P-value de:", p.value, "<", alpha)
+      
+    } else {
+       cat(  "No se rechaza H0, con un P-value de:", p.value, ">=", alpha)
+    }
+    
+  } else if (cola == "derecha"){
+     t.alpha = qt(1 - alpha, n - 1)
+     p.value = 1 - pt(t0, n-1)
+    
+    if (t0 >= t.alpha){
+      cat( "Se rechaza H0, con un P-value de:", p.value, "<", alpha)
+      
+    } else {
+       cat( "No se rechaza H0, con un P-value de:", p.value, ">=", alpha)
+    }
+
+  } else {
+    t.alpha = qt(1 - alpha / 2, n - 1)
+    p.value = 2 * (1 - pt(abs(t0), n-1))
+    
+    if (abs(t0) >= t.alpha){
+      cat( "Se rechaza H0, con un P-value de:", p.value, "<", alpha)
+      
+    } else {
+       cat( "No se rechaza H0, con un P-value de:", p.value, ">=", alpha)
+    }
+  }
+
+}
+
+
+```
+
+
+Ejecutemos la prueba
+
+
+```{r}
+
+n = 20
+x.bar  = 18.7
+s = 2.8
+alpha = 0.05
+cola = "izquierda"
+mu.cero = 20
+
+
+t.test2(n, x.bar, s, mu.cero, alpha, cola)
+
+```
+
+
+
+Conclusion: De acuerdo a la prueba tenemos un p-value = 0.02 que no es menor que alpha = 0.05 y relativamente pequeno. Por lo tanto, con una confianza del 95% (nivel de significancia del 5%)
+hay evidencia muestra sufieiciente para rechazar la hipotesis nula de que el consumo energetico medio real/poblacional del ssistema de refrigeracion es mayor o igual 20 kwh
+
