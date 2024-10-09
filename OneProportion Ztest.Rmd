@@ -1,0 +1,191 @@
+---
+title: "Ejercicios: One Proportion Z-test"
+author: "Silv"
+date: "2024-10-09"
+output: pdf_document
+---
+
+# Introduccion
+
+A continuacion vamos a realizar un conjunto de ejercicios del One-Proportion Z-test. Este  test, afortunadamente, tengamos o no tengamos el vector de datos, se puede realizar con una funcion de R. Existen 2 funciones para ejecutar este tipo de prueba: binom.test() y prop.test(). Ambas funciones realizan este test, sin embargo difieren en algo que se llama "correccion de continuidad de Yates". Para nuestro proposito es suficiente usar binom.test
+
+
+## consultar
+# Ensayo de bernuli
+# correcion de yates
+
+# Ejercicio 1
+
+Defectos en la Producción de Chips
+
+Una fábrica de chips electrónicos sabe que, históricamente, la proporción de productos defectuosos es del 5 %. Se toma una muestra de 20 (revisar 20 chips equivale a un fenomeno binomial) chips de una nueva línea de producción y se encuentra que los siguientes chips son defectuosos (donde 1 indica defectuoso y 0 indica no defectuoso):
+
+```{r}
+x = c(0, 0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0)
+```
+
+
+¿Puede la fábrica concluir que la proporción de productos defectuosos ha cambiado? Realiza
+una prueba de hipótesis con un nivel de significancia del 5 %.
+
+### Solucion
+
+De acuerdo al enunciado las hipotesis del problema son:
+
+Ho: La proporcion real/poblacional de chips defectuosos = 0.05 (Ho: p = .05)
+Ha: La proporcion real/poblacional de chips defectuosos != 0.05 (Ho: p != 0.05)
+
+Luego, es una prueba de dos colas o bilateral
+
+```{r}
+#Numero de exitos
+exitos = sum(x == 1)
+
+#cantidad de pruebas (total de datos)
+n = length(x)
+
+#recordar que siempre es conocido
+p0 = 0.05
+
+#nivel de significancia
+alpha = 0.05
+
+
+#Ejecutando la prueba
+
+binom.test(exitos, n, p0, alternative = "two.sided", conf.level = 1 - alpha)
+```
+
+# Conclusion
+
+
+De acuerdo a la prueba, con una confianza del 95% (nivel de significancia del 5%) hay evidencia muestral suficiente para rechazar la hipotesis de que la proporcion real de chips defectuosos es igual al 5%, ya que el p-value es menor que 0.05, por lo tanto podemos afirmar que esta proporcion real es difrente al 5%, por otro lado, observe que la proporcion muestral estimada de chips defectuosos es de 25%, luego la evidencia muestral tambien nos indicaba que esa meta de 5% no se cumple.
+
+
+# Ejercicio 2
+Eficacia de una Vacuna
+Un estudio clínico afirma que una nueva vacuna es efectiva en el 95 % de los casos. Se realiza un estudio sobre 400 pacientes vacunados y se observa que 370 de ellos desarrollaron inmunidad. ¿Es posible que la efectividad de la vacuna sea menor que el 95 %? Realiza una prueba de hipótesis con un nivel de significancia del 10 %.
+
+
+# Solucion
+
+### Solucion
+
+De acuerdo al enunciado las hipotesis del problema son:
+
+Ho: La proporcion real/poblacional de efectividad >= 0.95 (Ho: p >= 0.95)
+Ha: La proporcion real/poblacional de efectividad < 0.95 (Ha: p < 0.95)
+
+Luego, es una prueba de cola izquierda
+
+
+```{r}
+#Numero de exitos
+exitos = 370
+
+#cantidad de pruebas (total de datos)
+n = 400
+
+#recordar que siempre es conocido
+p0 = 0.95
+#nivel de significancia
+alpha = 0.1
+
+
+#Ejecutando la prueba
+
+binom.test(exitos, n, p0, alternative = "less", conf.level = 1 - alpha)
+```
+
+# Conclusion
+
+De acuerdo a la prueba, con una confianza del 90% (nivel de significancia del 10%) hay evidencia muestral suficiente para rechazar la hipotesis nula de que la proporcion real de efectividad de la vacuna sea mayor o igual al 0.95, lo anterior dado a que el p-value fue igual a 0.0190 < 0.1 y es pequenio. Ademas, la informacion muestral nnnos indica que la proporcion muestral de efectividad de la vacuna es del 0.925, por lo caul esto respalda la decision.
+
+# Ejercicio 3
+
+Encuesta de Satisfacción en un Restaurante
+Un restaurante afirma que al menos el 80 % de sus clientes están satisfechos con su servicio. Se realiza una encuesta a 30 clientes, cuyos resultados son los siguientes (donde 1 indica que el cliente está satisfecho y 0 indica que no lo está):
+
+```{r}
+x = c(1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1, 0, 1, 1, 1)
+```
+
+¿Se puede concluir que la proporción de clientes satisfechos es menor al 80 %? Realiza una
+prueba de hipótesis con un nivel de significancia del 5%.
+
+
+
+### Solucion
+
+De acuerdo al enunciado las hipotesis del problema son:
+
+Ho: La proporcion real/poblacional de efectividad >= 0.8 (Ho: p >= 0.8)
+Ha: La proporcion real/poblacional de clientes satisfechos < 0.8 (Ha: p < 0.8)
+
+Luego, es una prueba de cola izquierda
+
+
+```{r}
+#Numero de exitos
+exitos = sum(x == 1)
+
+#cantidad de pruebas (total de datos)
+n = length(x)
+
+#recordar que siempre es conocido
+p0 = 0.8
+
+#nivel de significancia
+alpha = 0.05
+
+
+#Ejecutando la prueba
+
+binom.test(exitos, n, p0, alternative = "less", conf.level = 1 - alpha)
+```
+
+
+# Conclusion, de acuerdo a la prueba, con una confianza 95% (nivel de significancia del 5%) NO hay evidencia muestral suficiente para rechazar la hipotesis nula de que la proporcion real de clientes satisfechos sea mayor o igual a 0.8, lo anterior dado a que el p-value es 0.5725 y no es menor ni pequenio a 0.05. Adicionalmente, la proporcion estimada de satisfaccion es exactamente 0.9, luego apoya la 
+
+
+# Ejercicio 4
+
+
+Aprobación de un Proyecto
+En una comunidad, se necesita el apoyo del 75 % de los residentes para aprobar un nuevo proyecto de infraestructura. De una muestra de 120 residentes, 82 están a favor del proyecto.
+
+¿Hay suficiente evidencia para concluir que menos del 75 % de los residentes apoya el proyecto?
+
+Realiza una prueba de hipótesis con un nivel de significancia del 5 %
+
+
+#Solucion
+
+De acuerdo al enunciado las hipotesis del problema son:
+
+Ho: La proporcion real/poblacional de apoyo de residentes >= 0.75 (Ho: p >= 0.75)
+Ha: La proporcion real/poblacional de apoyo de residentes < 0.75 (Ha: p < 0.75)
+
+Luego, es una prueba de cola izquierda
+
+
+
+```{r}
+#Numero de exitos
+exitos = 82
+
+#cantidad de pruebas (total de datos)
+n = 120
+
+#recordar que siempre es conocido
+p0 = 0.75
+#nivel de significancia
+alpha = 0.05
+
+
+#Ejecutando la prueba
+
+binom.test(exitos, n, p0, alternative = "less", conf.level = 1 - alpha)
+```
+
+# Conclusion, de acuerdo a la prueba, con una confianza 95% (nivel de significancia del 5%) NO hay evidencia muestral suficiente para rechazar la hipotesis nula de que la proporcion real de de clientes que estan a favor
