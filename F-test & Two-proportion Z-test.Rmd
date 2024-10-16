@@ -1,0 +1,239 @@
+---
+title: "F-test & Two-Proportion Z-test"
+author: "Silv"
+date: "2024-10-16"
+output: pdf_document
+---
+
+# Introduccion
+
+A continuacion, realizaremos algunos ejercicios de pruebas de hipotesis de ratio de varianzas (F-test) y pruebas de hipotesis de comparacion de proporcion (Two-Prop Z-test). Veremos que para la prueba de ratio de varianza necesitamos los datos para ejecutarla con una funcion propia de R: var.test(), para la prueba de dos proporciones sera indiferente sera indiferente si se tienen los datos o no.
+
+La prueba de comparacion de proporciones se ejecuta con la funcion prop.test(), la cual tiene una estructura muy similar con la funcion binom.test(). La funcuon prop.test() realiza una aproximaciion chi-squared en la ejecuacion de la prueba: Consultar por que pasa esto.
+
+# Ejercicios de Ratio de Varianza:
+
+# Ejercicio 1
+
+Un investigador quiere comparar las varianzas de dos máquinas. Las siguientes son las muestras de 10 observaciones para cada máquina:
+
+```{r}
+m1 = c(4.5, 5.2, 3.8, 4.9, 5.1, 4.7, 4.9, 5.3, 5.0, 4.8)
+m2 = c(3.9, 4.1, 3.5, 3.8, 4.0, 4.2, 3.7, 4.3, 3.6, 4.0)
+```
+
+¿Existe una diferencia significativa entre las varianzas de las dos máquinas al 5 % de nivel de significancia?
+
+# Solucion
+
+De acuerdo al enunciado, las hipotesis del problema son:
+
+Ho: La varianza de m1 = varianza de m2 (m1 / m2 = 1)
+Ha: La varianza de m1 != varianza de m2 (m1 / m2 != 1)
+
+
+```{r}
+alpha = 0.05
+f0 = 1
+
+var.test(m1, m2, ratio = f0, alternative = "two.sided", conf.level = 1- alpha)
+
+```
+
+
+# Conclusion
+
+De acuerdo a la prueba, a un nivel de confianza del 95% (nivel de significancia del 5%) NO hay prueba muestral suficiente para rechazar la hipotesis de que el ratio de varianzas sea igual a 1, lo anterior dado que el p-value = 0.1523 no es pequenio ni menos que 0.05. Por lo tanto, la evidencia muestral sugiere que el rendimiento de las maquinas es equi-disperso es homocedastico.
+
+
+Realicemos un grafico para validar lo que nos dice la prueba
+
+
+
+```{r}
+hist(m1, main = "Rendimiento maquina 1", color = "blue", freq = F, xlim = c(3, 6), ylim = c(0, 1.5))
+hist(m2, main = "Rendimiento maquina 2", color = "green", freq = F, add = T)
+
+
+```
+
+
+Del grafico podemos ver de que hay diferencia en la variable de rendimiento, en la dispersion, o al menos, en el rango de variabilidad, ambas maquinas parecieran tener el mismo tipo/nivel de dispersion. Sin embargo, debemos tener presente que solo tenemos 10 datos por maquinas, luego puede haber un sesgo inducido por la poca informacion muestral.
+
+
+
+
+# Ejercicio 2
+En un estudio sobre los tiempos de espera en dos supermercados, se toman las siguientes muestras:
+
+```{r}
+#n = 15
+supermercado.a = c(8, 9, 7, 12, 10, 13, 9, 8, 11, 10, 12, 9, 11, 12, 10)
+
+#n = 20
+supermercado.b = c(10, 11, 10, 14, 12, 13, 14, 13, 12, 15, 14, 13, 11, 10, 12, 13, 14,
+13, 15, 14)
+```
+
+Realiza una prueba F para determinar si las varianzas son significativamente diferentes al nivel de significancia del 1 %.
+
+
+
+### Solucion
+
+
+De acuerdo al enunciado, las hipotesis del problema son:
+
+Ho: La varianza de los tiempos de atencion de supermercado.a = varianzam de los tiempos de atencion de supermercado.b (m1 / m2 = 1)
+Ha: La varianza de los tiempos de atencion de supermercado.a != varianzam de los tiempos de atencion de supermercado.b (m1 / m2 != 1)
+
+
+```{r}
+alpha = 0.01
+f0 = 1
+
+var.test(supermercado.a, supermercado.b, ratio = f0, alternative = "two.sided", conf.level = 1 - alpha)
+
+
+```
+
+
+De acuerdo a la prueba, con una confianza del 99% (nivel de significancia del 1%) NO hay evidencia muestral suficiente para rechazar la hipotesis de que el ratio de varianzas de los tiempos tiempos de atencion de los supermercados sea igual a 1, lo anterior dado que el p-value = 0.6984 no es menor que 0.01 y tampoco es pequenio. Por lo tanto, la evidencia muestral sugiere que la dispersion en los tiempos de atencion de los supermercados son equi-dispersos.
+
+
+
+Tener presente lo siguiente, la anterior prueba no indica si hay un supermecado que tenga tiempos de atencion mas rapidos. La prueba unicamente valida si la dispersion es igual o no. Vamos a ver los boxplots de ambos supermercados.
+
+
+
+```{r}
+
+X =c(supermercado.a, supermercado.b)
+
+Ind = c(rep("A", length(supermercado.a)), rep("B", length(supermercado.b)))
+boxplot(X ~ Ind, horizontal = T, col = 'lightblue2', main = "tiempos de atencion por supermercado", xlab = "tiempos(min)", ylab = "supermercado")
+
+```
+
+
+
+# Ejercicio 3
+En un laboratorio, se estudia la consistencia de dos procesos. La muestra del proceso 1 tiene un tamaño de 12, una media de 25 y una varianza de 9. La muestra del proceso 2 tiene un tamaño de 16 y una varianza de 7. Realiza una prueba F para verificar si las varianzas son diferentes al 5 %
+
+### Solucion
+
+Como no tenemos los datos, debemnos entonces programar la prueba desde 0.
+
+
+```{r}
+f.test2 = function(sigma1, sigma2, n1, n2, alpha, cola){
+  
+  
+  f.est = sigma1 / sigma2
+  
+  if(cola == "izq"){
+    F.alpha = qf(alpha, n1 - 1, n2 - 1)
+    p.value = pf(f.estm, n1 - 1,  n2 - 1)
+    
+    if (f.est <= F.alpha){ 
+      cat ("Rechaza h0, con un p-value de:", p-value, "y un ratio de varianza de", f.ast)
+    } else {
+      cat ("No serechaza h0, con un p-value de:", p-value, "y un ratio de varianza de", f.ast) 
+    }
+    
+  } else if(cola == "der") {
+    
+    F.alpha = qf(1 - alpha, n1 - 1, n2 - 1)
+    p.value = 1 -pf(f.estm, n1 - 1,  n2 - 1)
+     
+    if (f.est >= F.alpha){ 
+      cat ("Rechaza h0, con un p-value de:", p-value, "y un ratio de varianza de", f.ast)
+    } else {
+      cat ("No rechaza h0, con un p-value de:", p-value, "y un ratio de varianza de", f.ast) 
+    }
+    
+  } else if (cola == "bilateral"){
+    
+    F.alpha1  = qf(alpha / 2, n1 - 1, n2 - 1)
+    F.alpha2  = qf(1 - alpha / 2, n1 - 1, n2 - 1)
+    p.value = 2 * min(pf(f.est, n1 - 1, n2 - 1), 1 - pf(f.est, n1 - 1, n2 - 1))
+    if (f.est <= F.alpha1 || f.est >= F.alpha2 ){ 
+      cat ("Rechaza h0, con un p-value de:", p.value, "y un ratio de varianza de", f.ast)
+    } else {
+      cat ("No serechaza h0, con un p-value de:", p.value, "y un ratio de varianza de", f.ast) 
+    }
+    
+  }
+    
+}
+
+
+
+```
+
+
+
+
+```{r}
+
+alpha = 0.05
+sigma1 = 9
+sigma2 = 7
+n1 = 12
+n2 = 16
+cola ="bilateral"
+
+f.test2(sigma1, sigma2, n1, n2, alpha, cola)
+
+
+
+```
+
+De acuerdo a la prueba a la prueba, con una confianza dek 95%, NO hay evidencua muestral suficiente para rechazar la hipotesis.
+
+
+Ejercicio 6
+En una encuesta, se preguntó a dos grupos de personas si prefieren el producto A. Los datos
+son:
+Grupo 1 (n = 150): [1, 1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 1, . . . ] (60 % de
+preferencia)
+Grupo 2 (n = 200): [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 0, 1, 1, . . . ] (50 % de
+preferencia
+
+
+# Solucion
+
+Las hipotesis del problema son:
+
+Ho: Proporcion de personas que ke gusta el producto A en el grupo 1 = Proporcion de personas que les gusta el prodcunto A en el grupo 2 (Ho: p1 = p2)
+
+Ha: Proporcion de personas que ke gusta el producto A en el grupo 1 != Proporcion de personas que les gusta el prodcunto A en el grupo 2 (Ha: p1 != p2)
+
+
+```{r}
+p1 = 0.6
+n1 = 150
+x1 = p1 * n1
+p2 = 0.5
+b2 = 200
+x2 = p2 * n2
+p0 = 0
+alpha = 0.05
+
+prop.test(c(x1, x2), c(n1, n2), alternative = "two.sided", conf.level = 1 - alpha)
+
+```
+
+# Tarea con sultar por que se puede hascer un z-test con chi-square
+
+De acuerdo a la prueba, con una confianza del 95% (nivel de significancia del 5%) NO hay evidencia muestral suficiente para rechazar la hipotesis de que las proporciones de personas que les gusta el producto A por grupo es diferente, lo anteriro ya que el p-value 0.08 no es menor a 0.05. La evidencia muestral nos due que la proporcion es la misma.
+
+# TAREA: Hacer los otros ejercicios
+
+
+
+
+
+
+
+
