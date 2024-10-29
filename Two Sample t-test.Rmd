@@ -1,0 +1,219 @@
+---
+title: "Two Sample t-test"
+author: "Silv"
+date: "2024-10-23"
+output: pdf_document
+---
+
+# Introdwuccion
+
+A continuacion vamos a realizar algunos ejercicios de pruebas de hipotesis de comparacion de medias.
+Realizaremos 6 ejercicios: 2 de two-sample, 2 de Welch t-test y 2 Paired t-test. De cada uno, 1 sera con datos y el otro sera solo la informacion muestral.
+
+Recordemos que para ejecutar una prueba de comparacion de medias es necesario primero validar si las poblaciones son homocedasticas entre si, es decir, tienen la misma varianza. Para ello, utilizaremos la prueba de hipotesis F-test par hacerlo; igualmente. recordemos que esta prueba la programamos en la clase anterior.
+
+La prueba F-test es guardarda en un fichero llamado functions.R
+
+```{r}
+
+# Cargar las funciones
+source("functions.R")
+```
+
+## Ejercicio 1
+
+Dos tipos de máquinas producen el mismo componente, pero se sospecha que tienen diferencias en sus tiempos de procesamiento. A continuación se presentan los tiempos (en minutos) de 10 muestras de cada máquina:
+
+```{r}
+m.a = c(12.5, 13.2, 11.8, 14.1, 12.9, 13.5, 11.7, 12.6, 13.3, 12.8)
+m.b = c(11.3, 12.7, 11.5, 10.9, 12.2, 11.1, 12.4, 11.6, 10.8, 11.9)
+```
+
+¿Existe una diferencia significativa en los tiempos de procesamiento entre las dos máquinas? Utiliza un nivel de significancia del 5 %
+
+
+# Solucion
+
+De acuerdo al enunciado, las hipotesis son:
+
+h0: el tiempo de procesamiento medio real/poblacional de m.a = tiempo procesamiento medio real/poblacional de m.b (ho: mu.a = mu.b ---- mu.a - mu.b = 0)
+ha: el tiempo de procesamiento medio real/poblacional de m.a != tiempo procesamiento medio real/poblacional de m.b (ha: mu.a != mu.b ---- mu.a - mu.b != 0)
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas reales/poblacionales de los tiempos del procesamiento de las maquinas son iguales o no. Para ello debemos ejecutar una prueba F, la cual define las hipotesis de la siguiente forma:
+
+ho: varianza real/poblacional del tiempo del procesamiento de m.a = varianza real/poblacional del tiempo del procesamiento de m.b (h0: var.a = var.b)
+ha: varianza real/poblacional del tiempo del procesamiento de m.a != varianza real/poblacional del tiempo del procesamiento de m.b (ha: var.a != var.b)
+
+Es una prueba de dos colas
+
+```{r}
+alpha = 0.05
+
+var.test(m.a, m.b, ratio =1, alternative ="two.sided", conf.level = 1 - alpha)
+```
+
+
+Con una confianza del 95%, NO hay evidencia muestral suficiente para rechazar la hipotesis que las varianzas poblacionales son iguales, esto dado al que el p-vakue = 0.6555 y no es pequenio ni menor que alpha. Por lo tanto, se evidencia que a y b tienen la misma varianza
+
+
+Dado lo anterior se ejecuta el two-sample t-test (no es necesario usar la correcion de welch-satterwaite w)
+
+```{r}
+
+t.test(m.a, m.b, mu = 0, alternative = "two.sided", conf.level = 1 - alpha, var.equal = T)
+
+```
+
+De acuerdo con la prueba, con una confianza del 95% HAY evidencia muestral suficiente para rechazar la hipotesis nula de que los tiempos medios reales de procesamiento de las maquinas a y b son iguales. Lo anterior, dado a que el p-value = 0.0011 que es menor y pequenio respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugiere que los tiempos de procesamiento de las maquinas son diferentes.
+
+
+```{r}
+
+M = c(m.a, m.b)
+Ind = c(rep("Maquina A", length(m.a)), rep("Maquina B", length(m.b)))
+boxplot(M ~ Ind, col = "lightblue3", horizontal = T)
+```
+
+
+
+# Ejercicio 2
+
+
+En un estudio de diabetes, se compararon los niveles de glucosa en dos grupos de pacientes (20 en cada grupo). Los datos de glucosa (en mg/dL) para los grupos son:
+
+```{r}
+g1 = c(105, 110, 115, 107, 112, 108, 115, 117, 109, 114, 106, 113, 118, 116, 119, 120,
+108, 109, 110, 112)
+g2 = c(128, 130, 133, 127, 135, 131, 136, 134, 129, 130, 132, 133, 135, 137, 129, 128,
+130, 131, 132, 134)
+```
+
+Determina si existe una diferencia significativa en los niveles de glucosa entre los dos grupos usando un nivel de significancia del 1 %.
+
+
+
+# Solucion
+
+De acuerdo al enunciado, las hipotesis son:
+
+h0: el nivel de glucosa media real/poblacional de g1 = el nivel de glucosa media real/poblacionalde g2 (h0: g1 = g2, g1 - g2 = 0)
+
+ha: el nivel de glucosa media real/poblacional de g1 != el nivel de glucosa media real/poblacionalde g2 (ha: g1 != g2, g1 - g2 != 0)
+
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas reales/poblacionales del nivel de glucosa de los dos grupos son iguales o no. Para ello debemos ejecutar una prueba F, la cual define las hipotesis de la siguiente forma:
+
+
+
+h0: varianza real/poblacional del nivel de glucosa media real/poblacional de g1 = varianza real/poblacional del varianza real/poblacional del nivel de glucosa media real/poblacional de g1 (h0: var.g1 = var.g2)
+
+ha: varianza real/poblacional del nivel de glucosa media real/poblacional de g1 != varianza real/poblacional del varianza real/poblacional del nivel de glucosa media real/poblacional de g1 (ha: var.g1 != var.g2)
+
+
+Es una prueba de dos colas
+
+```{r}
+
+
+M = c(g1, g2)
+Ind = c(rep("Grupo 1", length(g1)), rep("Grupo 2", length(g2)))
+boxplot(M ~ Ind, col = "lightblue3", horizontal = T)
+
+
+alpha = 0.01
+
+var.test(g1, g2, ratio =1, alternative ="two.sided", conf.level = 1 - alpha)
+```
+
+
+Dado lo anterior se ejecuta el two-sample t-test (no es necesario usar la correcion de welch-satterwaite w)
+
+
+
+```{r}
+alpha = 0.01
+
+t.test(g1, g2, mu = 0, alternative = "two.sided", conf.level = 1 - alpha, var.equal = T)
+
+```
+
+
+
+
+
+# Ejercicio 3
+
+
+Comparación de concentración de partículas en dos áreas industriales (Welch Two Sample t-Test) 
+Se midió la concentración de partículas (en μg/m3?) en dos áreas industriales diferentes:
+```{r}
+a1 = c(120, 130, 128, 135, 140, 125, 132, 138, 129, 1331)
+a2 = c(150, 158, 160, 155, 162, 157, 159, 163, 161, 154)
+```
+
+¿Hay una diferencia significativa en la concentración de partículas entre las dos áreas? Usa un nivel de significancia del 5 %.
+
+
+# Solucion
+
+```{r}
+alpha = 0.05
+
+var.test(a1, a2, ratio =1, alternative ="two.sided", conf.level = 1 - alpha)
+```
+
+```{r}
+t.test(g1, g2, mu = 0, alternative = "two.sided", conf.level = 1 - alpha, var.equal = F99o0000000000000)
+```
+
+
+
+
+Comparación de presión arterial sistólica en pacientes pre y post tratamiento (Paired t-Test)
+Se mide la presión arterial sistólica de 15 pacientes antes y después de un tratamiento para la hipertensión:
+```{r}
+
+t1 = c(150, 148, 155, 160, 145, 158, 152, 149, 156, 147, 150, 154, 159, 151, 153)
+t2 = c(140, 138, 145, 150, 135, 148, 142, 139, 146, 137, 140, 144, 149, 141, 143) + rnorm(15)
+```
+
+Realiza un *paired t-test* para determinar si el tratamiento ha reducido significativamente la presión arterial
+
+
+
+```{r}
+
+
+M = c(t1, t2)
+Ind = c(rep("Antes", length(t1)), rep("Despues", length(t2)))
+boxplot(M ~ Ind, col = "lightblue3", horizontal = T)
+
+
+alpha = 0.01
+
+var.test(g1, g2, ratio =1, alternative ="two.sided", conf.level = 1 - alpha)
+```
+
+
+De la anterior grafica podeos observar que hay evidencia muestral que indica un efecto de tratamiento. Lo anterior dado a que la presion sistolica disminuyo luego que los pacientes se sometieron al tratamiento. Vamos ahora a validar poblacionalmente esto.
+
+
+h0 : La presion sistolica media real antes del tratamiento = presion sistotilica media real despues del tratamiento (h0: mu.antes <= mu.despues)
+
+ha : La presion sistolica media real antes del tratamiento != presion sistotilica media real despues del tratamiento (ha: mu.antes > mu.despues)
+
+Luego, es una prueba de cola derecha
+
+
+
+```{r}
+
+alpha =0.05
+t.test(t1, t2, mu = 0, conf.level = 1 - alpha, paired = T, alternative = "greater", var.equal = F)
+
+
+
+```
+
+
+
