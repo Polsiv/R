@@ -1,0 +1,126 @@
+---
+title: "Test de Bondad y Ajuste"
+author: "Silv"
+date: "2024-10-30"
+output: html_document
+---
+
+
+# Funciob de distribucion empericia y kolmogorov-smirnov test
+
+
+A continuacion realizaremos algunas simulaciones para validar o checkear la relacion entre una funcion de distribucion y su estimacion empirica, veamos algunos ejemplos:
+
+```{r}
+#Simulemos datos que provengan de una distribucion y comparemos sus histogramas.
+
+n = 100000
+  
+x = rnorm(n) #simular datos normales estandar
+
+####
+Y = sort(rnorm(1000))
+pdf = dnorm(Y)
+hist(x, col = "gray", freq = F, xlim = c(-5, 5))
+lines(Y, pdf, lwd = 2, col = "red")
+
+```
+
+
+```{r}
+#Simulemos datos que provengan de una distribucion y comparemos sus histogramas.
+
+n = 100000
+beta = 5
+x = rexp(n, beta) #simular datos normales estandar
+
+###
+Y = sort(rexp(1000, beta))
+pdf = dexp(Y, beta)
+hist(x, col = "gray", freq = F, xlim = c(0, 1))
+lines(Y, pdf, lwd = 2, col = "red")
+
+# ejemplo 2, distribucion exponencial
+
+```
+
+
+Vamos a crear una funcion que nos calcule la funcion de distribucion empirica a unos datos.
+
+
+```{r}
+
+
+ecdf.2 = function(x){
+  n = length(x)
+  conteo = rep(0, n)
+  y = sort(x)
+  for (i in 1:n){
+    conteo[i] = sum(x <= y[i]) / n
+  }
+  return(conteo)
+}
+
+```
+
+
+Simulemos ahora unos datos y simulemos ahora tanto la teorica como la empirica
+
+
+```{r}
+#Simulemos datos que provengan de una distribucion y comparemos sus histogramas.
+
+n = 10000
+  
+x = rnorm(n) #simular datos normales estandar
+
+empi = ecdf.2(x)
+
+
+####
+Y = sort(rnorm(10000))
+pdf = pnorm(Y)
+####
+KS = round(max(abs(empi - pdf)), 3)
+
+plot(sort(x), empi, type = "S", lwd = 2,ylim = c(0, 1))
+
+abline(h = c(0, 1), col = "blue", lty = 2)
+
+lines(Y, pdf, lwd = 2, col = "red")
+
+legend("topleft", legend= c("Empirica", "Teorica", KS), lty = 1, col = c("black", "red"))
+
+ks.test(x, "pnorm")
+```
+
+
+
+
+
+```{r}
+#Simulemos datos que provengan de una distribucion exponencial y comparemos sus histogramas.
+
+n = 10
+x = rexp(n) #simular datos normales estandar
+empi = ecdf.2(x)
+
+
+####
+Y = sort(rnorm(1000))
+pdf = pnorm(Y)
+####
+KS = round(max(abs(empi - pdf)), 3)
+
+plot(sort(x), empi, type = "S", lwd = 2,ylim = c(0, 1))
+
+abline(h = c(0, 1), col = "blue", lty = 2)
+
+lines(Y, pdf, lwd = 2, col = "red")
+
+legend("topleft", legend= c("Empirica", "Teorica", KS), lty = 1, col = c("black", "red"))
+
+ks.test(x, "pnorm")
+```
+
+
