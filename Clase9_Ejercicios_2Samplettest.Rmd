@@ -1,0 +1,172 @@
+---
+title: "Two Sample t-test"
+author: "Santiago Ortiz"
+date: "2024-10-23"
+output: html_document
+---
+
+# Introducción
+
+A continuación, vamos a realizar algunos ejercicios de pruebas de hipótesis de comparación de medias. Realizaremos 6 ejercicios: 2 de Two-Sample t-test, 2 de Welch t-test y 2 Paired t-test. De cada uno, 1 será con datos y el otro será solo con la información muestral.
+
+Recordemos que para ejecutar una prueba de comparación de medias es necesarios primero validar si las poblaciones son homocedásticas entre sí, es decir, tienen la misma varianza. Para ello, utilizaremos la prueba de hipótesis F-test par hacerlo; igualmente, recordemos que esta prueba la programamos en la clase anterior.
+
+La prueba F-test que programamos la guardé en un fichero llamado "codigos.R", realizaremos la carga de este, de la siguiente manera:
+
+```{r}
+# Carga de la función f.test2() que se encuentra alojada en el fichero codigos.R
+source("codigos.R")
+```
+
+## Ejercicio 1: Comparación de tiempos de procesamiento en dos máquinas
+
+Dos tipos de máquinas producen el mismo componente, pero se sospecha que tienen diferencias en sus tiempos de procesamiento. A continuación se presentan los tiempos (en minutos) de 10 muestras de cada máquina:
+
+```{r}
+M.A = c(12.5, 13.2, 11.8, 14.1, 12.9, 13.5, 11.7, 12.6, 13.3, 12.8)
+M.B = c(11.3, 12.7, 11.5, 10.9, 12.2, 11.1, 12.4, 11.6, 10.8, 11.9)
+```
+
+¿Existe una diferencia significativa en los tiempos de procesamiento entre las dos máquinas? Utiliza un nivel de significancia del 5%.
+
+### Solución
+
+De acuerdo al enunciado, las hipótesis son:
+
+Ho: Tiempo de procesamiento medio real/poblacional de la Máquina A = Tiempo de procesamiento medio real/poblacional de la Máquina B (Ho: Mu.A = Mu.B ---- Mu.A - Mu-B = 0)
+
+Ha: Tiempo de procesamiento medio real/poblacional de la Máquina A != Tiempo de procesamiento medio real/poblacional de la Máquina B (Ho: Mu.A != Mu.B ---- Mu.A - Mu-B != 0)
+
+Es un prueba de dos colas o bilateral
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas reales/poblacionales de los tiempos de procesamiento de las máquinas son iguales o no. Para ello, debemos ejecutar una prueba F, la cual define las hipótesis de la siguiente forma:
+
+Ho: Varianza real/poblacional del tiempo de procesamiento de la Máquina A =  Varianza real/poblacional del tiempo de procesamiento de la Máquina B (Ho: Var.A = Var.B )
+
+Ho: Varianza real/poblacional del tiempo de procesamiento de la Máquina A !=  Varianza real/poblacional del tiempo de procesamiento de la Máquina B (Ho: Var.A != Var.B )
+
+Es una prueba de dos colas o bilateral
+
+```{r}
+alpha = 0.05
+var.test(M.A, M.B, ratio = 1, alternative = "two.sided", conf.level = 1 - alpha)
+```
+
+Con una confianza del 95%, NO hay evidencia muestral suficiente para rechazar la hipótesis de que las varianzas poblacionales son iguales, esto dado a que el P-Value = 0.695 que no es pequeño ni menor que alpha = 0.05. Por lo tanto, la evidencia muestral sugiere que los tiempos de procesamiento de las máquinas A y B tienen la misma varianza.
+
+Dado lo anterior, podemos ejecutar el two-sample t-test (No es necesario usar la corrección de Welch-Satterwaite). La prueba two-sample t-test es:
+
+```{r}
+t.test(M.A, M.B, mu = 0, alternative = "two.sided", conf.level = 1 - alpha, var.equal = T)
+```
+
+De acuerdo con la prueba, con una confianza del 95% HAY evidencia muestral suficiente para rechazar la hipótesis nula de que los tiempos medios reales de procesamiento de las máquinas A y B son iguales; lo anterior, dado a que el P-Value = 0.0011 que es menor y pequeño respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugieres que los tiempos de procesamiento de las máquinas son diferentes.
+
+```{r}
+M = c(M.A, M.B)
+Ind = c(rep("A", length(M.A)), rep("B", length(M.B)))
+boxplot(M ~ Ind, col = "lightblue3", horizontal = T, main = "Tiempos de Procesamiento", xlab = "Tiempo (min)", ylab = "Tipo de Máquina")
+```
+
+
+# Ejercicio 2: Comparación de niveles de glucosa en dos grupos de pacientes
+
+En un estudio de diabetes, se compararon los niveles de glucosa en dos grupos de pacientes (20 en cada grupo). Los datos de glucosa (en mg/dL) para los grupos son:
+
+```{r}
+G1 = c(105, 110, 115, 107, 112, 108, 115, 117, 109, 114, 106, 113, 118, 116, 119, 120,
+108, 109, 110, 112)
+G2 = c(128, 130, 133, 127, 135, 131, 136, 134, 129, 130, 132, 133, 135, 137, 129, 128,
+130, 131, 132, 134)
+```
+
+Determina si existe una diferencia significativa en los niveles de glucosa entre los dos grupos usando un nivel de significancia del 1%.
+
+```{r}
+M = c(G1, G2)
+Ind = c(rep(1, length(G1)), rep(2, length(G2)))
+boxplot(M ~ Ind, col = "red", horizontal = T, main = "Nivel de Glucosa", xlab = "Glucosa (mg/dL)", ylab = "Tipo de Grupo de Pacientes")
+###
+alpha = 0.01
+var.test(G1, G2, ratio = 1, alternative = "two.sided", conf.level = 1 - alpha)
+```
+
+```{r}
+t.test(G1, G2, mu = 0, alternative = "two.sided", conf.level = 1 - alpha, var.equal = F)
+```
+
+# Ejercicio 3: Comparación de presión arterial sistólica en pacientes pre y post tratamiento
+
+Se mide la presión arterial sistólica de 15 pacientes antes y después de un tratamiento para la hipertensión:
+
+```{r}
+T1 = c(150, 148, 155, 160, 145, 158, 152, 149, 156, 147, 150, 154, 159, 151, 153)
+T2 = c(140, 138, 145, 150, 135, 148, 142, 139, 146, 137, 140, 144, 149, 141, 143) + rnorm(15)
+```
+
+Realiza un *paired t-test* para determinar si el tratamiento ha reducido significativamente la presión arterial.
+
+```{r}
+M = c(T1, T2)
+Ind = c(rep("Antes", length(T1)), rep("Después", length(T2)))
+boxplot(M ~ Ind, col = "gold4", horizontal = T, main = "Presión Sistólica por Tratamiento", xlab = "Presión Sistólica (mg Hg)", ylab = "Grupo de Pacientes")
+```
+
+De la anterior gráfica podemos observar que hay evidencia muestral que indica un efecto del tratamiento. Lo anterior dado a que la presión sistólica disminuyó luego de que los pacientes se sometieron al tratamiento. Vamos ahora a validar poblacionalmente esto:
+
+Ho: La presión sistólica media real antes del tratamiento = La presión sistpolica media real después del tratamiento (Ho: Mu_antes <= Mu_después)
+
+Ha: La presión sistólica media real antes del tratamiento != La presión sistpolica media real después del tratamiento (Ho: Mu_antes > Mu_después)
+
+Luego, es una prueba de cola derecha
+
+```{r}
+alpha = 0.05
+t.test(T1, T2, mu = 0, conf.level = 1 - alpha, paired = T, alternative = "greater")
+
+```
+
+Se rechaza Ho...
+
+### NOTA:
+
+En las pruebas pareadas no se debe realizar el test de igualdad de varianzas, puesto que al final es una muestra la que se tiene (no hay otra con quien comparar).
+
+## TAREA: Programar las pruebas de hipótesis y realizar los ejercicios 6 a 10 en un RMarkdown. Lo pueden hacer en parejas. Entregar por Moodle (habrá un buzón) el martes próximo (29 de Octubre) hasta las 23:00 horas. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

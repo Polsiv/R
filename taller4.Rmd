@@ -1,0 +1,95 @@
+---
+title: "Taller 4"
+author: "Juan Pablo Silvestre y Sebastián López"
+date: "2024-10-29"
+output: pdf_document
+---
+
+# Introducción
+
+A continuación, se realizarán los ejercicios ejercicios 6 al 10 del tallerde pruebas de hipótesis de comparación de medias.
+
+
+Recordemos que para ejecutar una prueba de comparación de medias es necesarios primero validar si las poblaciones son homocedásticas entre sí, es decir, tienen la misma varianza. Para ello, utilizaremos la prueba de hipótesis F-test programada en clase, la cual está alojada en el archivo functions.R
+
+```{r}
+# Carga de la función f.test2() que se encuentra alojada en el fichero functions.R
+source("functions.R")
+```
+
+
+## Ejercicio 6
+### Comparación de dos procesos de manufactura (Two Sample t-Test)
+
+Se quiere comparar la media del diámetro de piezas producidas por dos procesos diferentes. El proceso 1 tiene una media muestral de 45.5 mm con una desviación estándar de 1.2 mm, y el proceso 2 tiene una media de 46.0 mm con una desviación estándar de 1.5 mm. Cada proceso tiene 25 observaciones. ¿Hay evidencia de que las medias de los diámetros son diferentes a un nivel de significancia del 5 %?
+
+
+## Solución
+
+Como no tenemos los datos, debemnos entonces programar la prueba desde 0, esta prueba también está alojada en el archivo functions.R (de igual forma se mostrará al final del documento).
+
+De acuerdo al enunciado, las hipótesis son:
+
+H0: Diámetro de piezas medio real/poblacional del proceso 1 = diámetro de piezas medio real/poblacional del proceso 2 (H0: Mu.d1 = Mu.d2 -> Mu.d1 - Mu.d2 = 0)
+Ha: Diámetro de piezas medio real/poblacional del proceso 1 != diámetro de piezas medio real/poblacional del proceso 2 (Ha: Mu.d1 != Mu.d2 -> Mu.d1 - Mu.d2 != 0)
+
+Con lo anterior, Es un prueba de dos colas o bilateral
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas reales/poblacionales de los diámetros de piezas de los dos procesos son iguales o no. Para ello, debemos ejecutar una prueba F, la cual define las hipótesis de la siguiente forma:
+
+H0: Varianza real/poblacional del diámetro de piezas del proceso 1 = varianza real/poblacional del diámetro de piezas del proceso 2 (H0: Var.d1 = Var.d2)
+Ha: Varianza real/poblacional del diámetro de piezas del proceso 1 != varianza real/poblacional del diámetro de piezas del proceso 2 (Ha: Var.d1 != Var.d2)
+
+Con lo anterior, es una prueba de dos colas o bilateral.
+
+
+```{r}
+#data 
+n1 = 25
+n2 = 25
+media1 = 45.5
+media2 = 46
+s1 = 1.2
+s2 = 1.5
+alpha = 0.05
+
+```
+
+```{r}
+f.test2(s1, s2, n1, n2, alpha, "bilateral")
+```
+Con una confianza del 95%, NO hay evidencia muestral suficiente para rechazar la hipótesis de que las varianzas poblacionales son iguales, esto dado a que el P-Value = 0.5889407 que no es pequeño ni menor que alpha = 0.05. Por lo tanto, la evidencia muestral sugiere que el diámetro de piezas de los procesos 1 y 2, tienen la misma varianza.
+
+Dado lo anterior, podemos ejecutar el two-sample t-test (No es necesario usar la corrección de Welch-Satterwaite). La prueba two-sample t-test es:
+
+
+```{r}
+correccion = FALSE
+cola = "bilateral"
+two.sample.t.test(n1, n2, media1, media2, s1, s2, correccion, cola, alpha)
+```
+
+De acuerdo con la prueba, con una confianza del 95% NO hay evidencia muestral suficiente para rechazar la hipótesis nula que los diámetros de piezas de los procesos 1 y 2 son iguales; lo anterior, dado a que el P-Value = 0.199... que es menor y pequeño respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugieres que los los diámetros son iguales.
+
+## Ejercicio 7
+### Comparación de tiempos de recuperación de pacientes (Welch Two Sample t-Test)
+
+Un estudio comparó los tiempos de recuperación de dos grupos de pacientes que recibieron diferentes tratamientos para una enfermedad. El grupo A tuvo un tiempo promedio de recupe ración de 12.3 días con una desviación estándar de 2.1 días (n=30), mientras que el grupo B tuvo un tiempo promedio de recuperación de 11.7 días con una desviación estándar de 1.8 días (n=25). ¿Es significativamente diferente el tiempo de recuperación entre los dos grupos?
+
+
+
+
+## Ejercicio 9
+### Comparación de la presión de tuberías antes y después de una intervención (Paired t-Test)
+
+En un sistema de tuberías industriales, se mide la presión de operación antes y después de una intervención en 12 puntos. La media de la presión antes es de 100 psi con una desviación estándar de 5 psi, y la media después es de 95 psi con una desviación estándar de 4 psi. ¿Ha habido una reducción significativa en la presión con un nivel de significancia del 5 %?
+
+
+
+
+
+
+
+
+
+
