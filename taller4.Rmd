@@ -52,7 +52,6 @@ media2 = 46
 s1 = 1.2
 s2 = 1.5
 alpha = 0.05
-
 ```
 
 ```{r}
@@ -60,7 +59,7 @@ f.test2(s1, s2, n1, n2, alpha, "bilateral")
 ```
 Con una confianza del 95%, NO hay evidencia muestral suficiente para rechazar la hipótesis de que las varianzas poblacionales son iguales, esto dado a que el P-Value = 0.5889407 que no es pequeño ni menor que alpha = 0.05. Por lo tanto, la evidencia muestral sugiere que el diámetro de piezas de los procesos 1 y 2, tienen la misma varianza.
 
-Dado lo anterior, podemos ejecutar el two-sample t-test (No es necesario usar la corrección de Welch-Satterwaite). La prueba two-sample t-test es:
+Dado lo anterior, podemos ejecutar el two-sample t-test (No es necesario usar la corrección de Welch-Satterwaite).
 
 
 ```{r}
@@ -69,7 +68,7 @@ cola = "bilateral"
 two.sample.t.test(n1, n2, media1, media2, s1, s2, correccion, cola, alpha)
 ```
 
-De acuerdo con la prueba, con una confianza del 95% NO hay evidencia muestral suficiente para rechazar la hipótesis nula que los diámetros de piezas de los procesos 1 y 2 son iguales; lo anterior, dado a que el P-Value = 0.199... que es menor y pequeño respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugieres que los los diámetros son iguales.
+De acuerdo con la prueba, con una confianza del 95% NO hay evidencia muestral suficiente para rechazar la hipótesis nula que los diámetros de piezas de los procesos 1 y 2 son iguales; lo anterior, dado a que el P-Value = 0.1993173 no es menor ni tampoco pequeño respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugieres que los diámetros son iguales.
 
 ## Ejercicio 7
 ### Comparación de tiempos de recuperación de pacientes (Welch Two Sample t-Test)
@@ -79,15 +78,105 @@ Un estudio comparó los tiempos de recuperación de dos grupos de pacientes que 
 
 
 
+
+## Ejercicio 8
+### Comparación de peso promedio en dos lotes de productos (Two Sample t-Test)
+
+En una planta de alimentos, se sospecha que dos lotes de producción tienen un peso promedio diferente. El lote 1 tiene una media muestral de 500 g y una desviación estándar de 8 g (n=20). El lote 2 tiene una media muestral de 505 g y una desviación estándar de 10 g (n=22). ¿Existen diferencias significativas entre los dos lotes a un nivel de significancia del 1 %?
+
+## Solución
+
+De acuerdo al enunciado, las hipótesis son:
+
+H0: Peso medio real/poblacional del lote 1 = Peso medio real/poblacional del lote 2  (H0: Mu.l1 = Mu.l2 -> Mu.l1 - Mu.l2 = 0)
+Ha: Peso medio real/poblacional del lote 1 != Peso medio real/poblacional del lote 2  (Ha: Mu.l1 != Mu.l2 -> Mu.l1 - Mu.l2 != 0)
+
+Con lo anterior, Es un prueba de dos colas o bilateral.
+
+También, debemos validar si poblacionalmente las varianzas reales/poblacionales de los diámetros de piezas de los dos procesos son iguales o no. Para ello, debemos ejecutar una prueba F, la cual define las hipótesis de la siguiente forma:
+
+H0: Varianza real/poblacional del peso del lote 1 = varianza real/poblacional del peso del lote 2 (H0: Var.l1 = Var.l2)
+Ha: Varianza real/poblacional del peso del lote 1 = varianza real/poblacional del peso del lote 2 (Ha: Var.l1 = Var.l2)
+
+Con lo anterior, Es un prueba de dos colas o bilateral.
+
+```{r}
+#data 
+n1 = 20
+n2 = 22
+media1 = 500
+media2 = 505
+s1 = 8
+s2 = 10
+alpha = 0.01
+```
+
+```{r}
+f.test2(s1, s2, n1, n2, alpha, "bilateral")
+```
+
+Con una confianza del 99%, NO hay evidencia muestral suficiente para rechazar la hipótesis de que las varianzas poblacionales son iguales, dado a que el P-Value = 0.6289368 que no es pequeño ni menor que alpha = 0.01. Por lo tanto, la evidencia muestral sugiere que el peso de los lotes 1 y 2, tienen la misma varianza.
+
+Dado lo anterior, podemos ejecutar el two-sample t-test (No es necesario usar la corrección de Welch-Satterwaite)
+
+```{r}
+correccion = FALSE
+cola = "bilateral"
+two.sample.t.test(n1, n2, media1, media2, s1, s2, correccion, cola, alpha)
+```
+Con base en la prueba, con una confianza del 99% NO hay evidencia muestral suficiente para rechazar la hipótesis nula de que el peso de los lotes de producción 1 y 2 son iguales; lo anterior, dado a que el P-Value = 0.08310037 no es menor ni tampoco pequeño respecto a alpha = 0.01. Por lo tanto, la evidencia muestral sugiere que el peso de los dos lotes de producción iguales.
+
+
 ## Ejercicio 9
+
 ### Comparación de la presión de tuberías antes y después de una intervención (Paired t-Test)
 
 En un sistema de tuberías industriales, se mide la presión de operación antes y después de una intervención en 12 puntos. La media de la presión antes es de 100 psi con una desviación estándar de 5 psi, y la media después es de 95 psi con una desviación estándar de 4 psi. ¿Ha habido una reducción significativa en la presión con un nivel de significancia del 5 %?
 
+## Solución
+
+De acuerdo al enunciado, las hipótesis son:
+
+Ho: La presión media real antes de la intervención es igual a la presión media real después de la intervención, es decir, no hay reducción significativa en la presión después de la intervención.  
+\( \text{Ho: } \mu_{\text{antes}} <= \mu_{\text{después}} \)
+
+Ha:La presión media real antes de la intervención es mayor que la presión media real después de la intervención, indicando que la intervención reduce la presión en el sistema.  
+\( \text{Ha: } \mu_{\text{antes}} > \mu_{\text{después}} \)
+
+Dado que estamos buscando una reducción, esta es una prueba de cola derecha.
+
+```{r}
+
+media_antes = 100
+media_despues = 95
+desv_est_antes = 5
+desv_est_despues = 4
+n = 12
+alpha = 0.05
+
+media_diferencia = media_antes - media_despues
+desv_est_diferencias = sqrt(desv_est_antes^2 + desv_est_despues^2)
+
+t_value = media_diferencia / (desv_est_diferencias / sqrt(n))
+
+df = n - 1
+
+p_value = pt(t_value, df = df, lower.tail = FALSE)
+p_value
 
 
+if (p_value < alpha) {
+  resultado = "Se rechaza Ho: Existe evidencia suficiente para afirmar que la presión
+  media disminuyó después de la intervención."
+} else {
+  resultado = "No se rechaza Ho: No hay evidencia suficiente para afirmar que la presión 
+  media disminuyó después de la intervención."
+}
+resultado
 
+```
 
+De acuerdo con la prueba, con una confianza del 95%, HAY evidencia muestral suficiente para rechazar la hipótesis nula de que no hay reducción en la presión de las tuberías después de la intervención; esto dado que el p-valor obtenido es menor que el nivel de significancia ($\alpha$ = 0.05). En este caso, el p-valor es de aproximadamente 0.01, lo cual es significativamente bajo. Por lo tanto, la evidencia muestral sugiere que la intervención produjo una reducción significativa en la presión de las tuberías.
 
 
 
