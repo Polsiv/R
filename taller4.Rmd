@@ -1,6 +1,6 @@
 ---
 title: "Taller 4"
-author: "Juan Pablo Silvestre y Sebastián López"
+author: "Juan Pablo Silvestre - 99127 y Sebastián López - 97500"
 date: "2024-10-29"
 output: pdf_document
 ---
@@ -195,7 +195,7 @@ n = 12
 alpha = 0.05
 
 media_diferencia = m.a - m.d
-desv_est_diferencias = sqrt(s.a^2 + s.d^2)
+desv_est_diferencias = sqrt((s.a^2 + s.d^2) / 2 )
 
 t_value = media_diferencia / (desv_est_diferencias / sqrt(n))
 
@@ -214,7 +214,7 @@ resultado
 
 ```
 
-De acuerdo con la prueba, con una confianza del 95%, HAY evidencia muestral suficiente para rechazar la hipótesis nula: no hay reducción en la presión de las tuberías después de la intervención; esto dado que el p-valor obtenido es menor que el nivel de significancia ($\alpha$ = 0.05). En este caso, el p-valor es de aproximadamente 0.01, lo cual es significativamente bajo. Por lo tanto, la evidencia muestral sugiere que la intervención produjo una reducción significativa en la presión de las tuberías.
+De acuerdo con la prueba, con una confianza del 95%, HAY evidencia muestral suficiente para rechazar la hipótesis nula: no hay reducción en la presión de las tuberías después de la intervención; esto dado que el p-valor obtenido es menor que el nivel de significancia ($\alpha$ = 0.05). En este caso, el p-valor es de aproximadamente 0.001, lo cual es significativamente bajo. Por lo tanto, la evidencia muestral sugiere que la intervención produjo una reducción significativa en la presión de las tuberías.
 
 
 ## Ejercicio 10
