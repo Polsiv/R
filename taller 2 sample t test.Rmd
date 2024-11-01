@@ -262,11 +262,13 @@ p.value=pt(t.value, df=df, lower.tail=FALSE)
 
 if (p.value<alpha) {
   cat("Se rechaza h0 con un p-value de:", p.value)
-} else { 
-  cat("No se rechaza h0 con un p-value de:", p.value)
-}
+} else {  cat("No se rechaza h0 con un p-value de:", p.value)
+  }
 
 ```
+## Conclusión
+
+Con base en los resultados de la prueba, y con una confianza del 95%, SÍ HAY evidencia muestral suficiente para rechazar la hipótesis de que no hay reducción en la presión de las tuberías después de la intervención, ya que el p-value = 0.00140821, el cual sí es menor que alpha y también es pequeño. Con esto, la evidencia muestral sugiere que sí hubo una reducción signficativa en la presión de las tuberias después de la interverción.
 
 ## Ejercicio 10 Comparación de la efectividad de dos tratamientos médicos (Welch Two Sample t-Test)
 
