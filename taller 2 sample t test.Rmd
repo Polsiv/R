@@ -1,0 +1,321 @@
+---
+title: "Taller Two-Sample T-Test"
+author: "pelaa y pelao"
+date: "2024-10-31"
+output: pdf_document
+---
+
+# Desarrollo de los ejercicios 
+
+Antes de proceder con los ejercicios, requerimos la prueba F-test para si validar si las poblaciones son homocedásticas entre sí, es decir, tienen la misma varianza, donde se hará uso de la prueba F-test para verificiar lo anterior. Además anterior, programamos la prueba Two-Sample T-Test para la comparación de las medias, ya que en los ejercicios no tenemos la muestras.
+
+La prueba F-test es:
+
+```{r}
+f.test2=function(sigma1, sigma2, n1, n2, alpha, cola){
+  f.est =sigma1/sigma2
+  if(cola=="izquierda"){
+    F.alpha=qf(alpha, n1-1, n2-1)
+    p.value=pf(f.estm, n1-1, n2-1)
+    if (f.est<=F.alpha){ 
+      cat ("Se rechaza H0, con un p-value de:", p-value, "y un ratio de varianza de", f.est)
+    } else { cat ("No rechaza 0, con un p-value de:", p-value, "y un ratio de varianza de", f.est) 
+      }
+  } else if(cola=="derecha") {
+    F.alpha=qf(1-alpha, n1-1, n2-1)
+    p.value=1-pf(f.estm, n1-1, n2-1)
+    if (f.est>=F.alpha){ 
+      cat ("Se rechaza H0, con un p-value de:", p-value, "y un ratio de varianza de", f.est)
+    } else { cat ("No rechaza h0, con un p-value de:", p-value, "y un ratio de varianza de", f.est) 
+      }
+  } else if (cola=="bilateral"){
+    F.alpha1=qf(alpha/2, n1-1, n2-1)
+    F.alpha2=qf(1-alpha/2, n1-1, n2-1)
+    p.value=2*min(pf(f.est, n1-1, n2-1), 1-pf(f.est, n1-1, n2-1))
+    if (f.est<=F.alpha1 || f.est>=F.alpha2){ 
+      cat ("Se rechaza H0, con un p-value de:", p.value, "y un ratio de varianza de", f.est)
+    } else { cat ("No rechaza h0, con un p-value de:", p.value, "y un ratio de varianza de", f.est) 
+      }
+   }
+}
+
+```
+
+La prueba a Two-Sample T-Test es la siguiente:
+
+```{r}
+two_sample.t_test = function(n1, n2, media1, media2, desv1, desv2, cola, correccion.welch, alpha ){
+  v.ponderada=sqrt(((n1-1)*desv1^2+(n2-1)*desv2^2)/(n1+n2-2))
+  if (correccion.welch=="si"){
+    t0=(media1-media2)/sqrt((desv1^2/n1) + (desv2^2/n2))
+    parametro=((desv1^2/n2)+(desv2^2/n2))^2/((desv1^2/n1)^2/(n1-1)+(desv2^2/n2)^2/(n2-1))
+  } else {
+    t0=(media1-media2)/(v.ponderada*sqrt((1/n1)+(1/n2)))
+    parametro=n1+n2-2
+  }
+  if (cola=="izquierda"){
+    p.value=pt(t0, parametro)
+    if (t0<=qt(alpha, parametro)){
+      cat("Se rechaza H0, con un p-value de:", p.value, "menor que", alpha)
+    } else {
+      cat("No rechaza h0, con un p-value de:", p.value, "mayor que", alpha)
+    }
+  } else if (cola=="derecha"){
+    p.value=1-pt(t0, df)
+    if (t0>=qt(1-alpha, parametro)){
+      cat("Se rechaza H0, con un p-value de:", p.value, "menor que", alpha)
+    } else {
+      cat("No rechaza h0, con un p-value de:", p.value, "mayor que", alpha)
+    }
+  } else if (cola=="bilateral"){
+    p.value=2*(1-pt(abs(t0), parametro))
+    if (t0>=qt(1-alpha/2, parametro)){
+      cat("Se rechaza H0, con un p-value de:", p.value, "menor que", alpha)
+    } else {
+      cat("No rechaza h0, con un p-value de:", p.value, "mayor que", alpha)
+    }
+  }
+}
+```
+
+Con las funciones creadas, podemos continuar.   
+
+## Ejercicio 6 Comparación de dos procesos de manufactura (Two Sample t-Test)
+
+Se quiere comparar la media del diámetro de piezas producidas por dos procesos diferentes. El proceso 1 tiene una media muestral de 45.5 mm con una desviación estándar de 1.2 mm, y el proceso 2 tiene una media de 46.0 mm con una desviación estándar de 1.5 mm. Cada proceso tiene 25 observaciones. ¿Hay evidencia de que las medias de los diámetros son diferentes a un nivel de significancia del 5 %?
+
+## Solución
+
+De acuerdo al enunciado, las hipótesis de este problema son:
+
+ho: diametro de piezas medio poblacional del proceso 1 = diametro de piezas medio poblacional del proceso 2 (ho: mu-d1 = mu-d2) 
+ha: diametro de piezas medio poblacional del proceso 1 != diametro de piezas medio poblacional del proceso 2 (ha: mu-d1 != mu-d2)
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas poblacionales de las piezas y sus diametros de los 2 procesos son iguales o no. Para ello, debemos ejecutar la prueba F, que define las hipotesis de la siguiente forma:
+
+h0: varianza del diametros de las piezas del proceso 1 = varianza del diametros de las piezas del proceso 2 (h0: Sigma1-squared / Sigma2-squared = 1)
+ha: varianza del diametros de las piezas del proceso 1 != varianza del diametros de las piezas del proceso 2 (h0: Sigma1-squared / Sigma2-squared != 1)
+
+Estamos ante una prueba de tipo bilateral.
+
+Primero obtenemos los datos del ejercicio
+```{r}
+n1=25
+n2=25
+media1=45.5
+media2=46
+desv1=1.2
+desv2=1.5
+alpha=0.05
+```
+
+```{r}
+cola="bilateral"
+f.test2(desv1, desv2, n1, n2, alpha, cola)
+```
+Dada una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que las varianzas poblacionales son iguales, ya que el p-value no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que el diametro de piezas de los procesos 1 y 2 tienen la misma varianza.
+
+Ahora podemos ejecutar el two-sample t-test, y con la conclusión de la anterior prueba, no es necesario usar la correción de Welch.
+
+
+```{r}
+correccion.welch = "no"
+cola = "bilateral"
+two_sample.t_test(n1, n2, media1, media2, desv1, desv2, cola, correccion.welch, alpha)
+```
+
+## Conclusión
+
+Con una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que los diametros de piezas de ambos procesos son iguales, ya que el p-value no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que el los diametros de las piezas de ambos procesos son iguales.
+
+## Ejercicio 7 Comparación de tiempos de recuperación de pacientes (Welch Two Sample t-Test)
+
+Un estudio comparó los tiempos de recuperación de dos grupos de pacientes que recibieron diferentes tratamientos para una enfermedad. El grupo A tuvo un tiempo promedio de recuperación de 12.3 días con una desviación estándar de 2.1 días (n=30), mientras que el grupo B tuvo un tiempo promedio de recuperación de 11.7 días con una desviación estándar de 1.8 días (n=25). ¿Es significativamente diferente el tiempo de recuperación entre los dos grupos?
+
+## Solución
+
+De acuerdo al enunciado, las hipótesis de este problema son:
+
+h0: tiempo de recuperación promedio poblacional del grupo A = tiempo de recuperación promedio real poblacional del grupo B (h0: mu.A = mu.B)
+ha: tiempo de recuperación promedio poblacional del grupo A != Tiempo de recuperación promedio real/poblacional del grupo B (ha: mu.A != mu.B)
+
+Con lo anterior, es un prueba de cola bilateral.
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas poblacionales de los tiempos de recuperación de ambos grupos son iguales o no. Para ello, debemos ejecutar la prueba F, que define las hipotesis de la siguiente forma:
+
+h0: varianza real/poblacional del tiempo de recuperación del grupo A = varianza real/poblacional del tiempo de recuperación del grupo B (h0: SigmaA-squared / SigmaB-squared = 1)
+ha: varianza real/poblacional del tiempo de recuperación del grupo A != varianza real/poblacional del tiempo de recuperación del grupo B (ha: SigmaA-squared / SigmaB-squared != 1)
+
+Con lo anterior, es un prueba de cola bilateral.
+
+Primero obtenemos los datos del ejercicio
+```{r}
+n1 = 30
+n2 = 25
+media1 = 12.3
+media2 = 11.7
+desv1 = 2.1
+desv2 = 1.8
+alpha = 0.05
+```
+
+```{r}
+cola="bilateral"
+f.test2(desv1, desv2, n1, n2, alpha, cola)
+```
+Dada una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que las varianzas poblacionales son iguales, ya que el p-value = 0.7055728, lo cual no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que el tiempo de recuperación de ambos grupos tienen la misma varianza.
+
+
+Ahora podemos ejecutar el two-sample t-test, y con la conclusión de la anterior prueba, no es necesario usar la correción de Welch.
+
+```{r}
+correccion.welch = "no"
+cola = "bilateral"
+two_sample.t_test(n1, n2, media1, media2, desv1, desv2, cola, correccion.welch, alpha)
+```
+
+## Conclusión
+
+Con una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que los tiempos de recuperación de ambos grupos son iguales, ya que el p-value = 0.2657434, que no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que el el tiempo de recuperación del grupo A y B son iguales.
+
+
+## Ejercicio 8 Comparación de peso promedio en dos lotes de productos (Two Sample t-Test)
+
+En una planta de alimentos, se sospecha que dos lotes de producción tienen un peso promedio diferente. El lote 1 tiene una media muestral de 500 g y una desviación estándar de 8 g (n=20). El lote 2 tiene una media muestral de 505 g y una desviación estándar de 10 g (n=22). ¿Existen diferencias significativas entre los dos lotes a un nivel de significancia del 1 %?
+
+## Solución
+
+De acuerdo al enunciado, las hipótesis de este problema son:
+
+h0: peso medio poblacional del lote de produccuión 1 = peso medio poblacional del lote de produccuión 2 (h0: mu.l1 = mu.l2, mu.l1 - mu.l2 = 0)
+ha: peso medio poblacional del lote de produccuión 1 = peso medio poblacional del lote de produccuión 2 (ha: mu.l1 = mu.l2, mu.l1 - mu.l2 = 0)
+
+Estamos ante una prueba de tipo bilateral. 
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas poblacionales del peso de ambos lotes de producción son iguales o no. Para ello, debemos ejecutar la prueba F, que define las hipotesis de la siguiente forma:
+
+h0: varianza real/poblacional del peso del lote de producción 1 = varianza real/poblacional del peso del lote de producción 2 (h0: Sigma-squared-l1 / Sigma-squared-l2 = 1)
+ha: varianza real/poblacional del peso del lote de producción 1 != varianza real/poblacional del peso del lote de producción 2 (h0: Sigma-squared-l1 / Sigma-squared-l2 != 1)
+
+Estamos ante una prueba de tipo bilateral. 
+
+Primero obtenemos los datos del ejercicio
+
+```{r}
+alpha = 0.01
+n1 = 20
+n2 = 22
+media1 = 500
+media2 = 505
+desv1 = 8
+desv2 = 10
+
+```
+
+```{r}
+cola="bilateral"
+f.test2(desv1, desv2, n1, n2, alpha, cola)
+```
+
+Con una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que las varianzas poblacionales son iguales, ya que el p-value = 0.6289368, lo cual no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que el peso de los lotes 1 y 2 tienen  la misma varianza.
+
+
+Ahora podemos ejecutar el two-sample t-test, y con la conclusión de la anterior prueba, no es necesario usar la correción de Welch.
+
+```{r}
+correccion.welch = "no"
+cola = "bilateral"
+two_sample.t_test(n1, n2, media1, media2, desv1, desv2, cola, correccion.welch, alpha)
+```
+## Conclusión
+
+Con una confianza del 99%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que el peso de ambos lotes de producción es igual, ya que el p-value = 0.08310037 , que no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que los lotes 1 y 2 tienen el mismo peso, lo que concluye a que no hay diferencias significativas.
+
+
+## Ejercicio 9 Comparación de la presión de tuberías antes y después de una intervención (Paired t-Test)
+
+En un sistema de tuberías industriales, se mide la presión de operación antes y después de una intervención en 12 puntos. La media de la presión antes es de 100 psi con una desviación estándar de 5 psi, y la media después es de 95 psi con una desviación estándar de 4 psi. ¿Ha habido una reducción significativa en la presión con un nivel de significancia del 5 %?
+
+## Solución
+
+De acuerdo al enunciado anterior, las hipótesis son:
+
+h0: la presión media poblacional antes de la intervención <= la presión media poblacional después de la intervención. (h0: mu.antes <= mu.después)
+ha: la presión media poblacional antes de la intervención >= la presión media poblacional después de la intervención.  (ha: mu.antes > mu.después)
+
+Estamos ante una prueba de cola derecha.
+
+
+```{r}
+n=12
+m.antes=100
+m.despues=95
+desv.antes=5
+desv.despues= 4
+alpha = 0.05
+
+media.diferencial=m.antes-m.despues
+desv.diferencias=sqrt((desv.antes^2 + desv.despues^2)/2)
+t.value=media.diferencial/(desv.diferencias/ sqrt(n))
+df=n-1
+p.value=pt(t.value, df=df, lower.tail=FALSE)
+
+if (p.value<alpha) {
+  cat("Se rechaza h0 con un p-value de:", p.value)
+} else { 
+  cat("No se rechaza h0 con un p-value de:", p.value)
+}
+
+```
+
+## Ejercicio 10 Comparación de la efectividad de dos tratamientos médicos (Welch Two Sample t-Test)
+
+Un estudio clínico investiga si dos tratamientos tienen efectos diferentes en la reducción de un marcador biológico. El grupo A (n=40) tiene una reducción promedio de 15 unidades con una desviación estándar de 3.5, mientras que el grupo B (n=35) tiene una reducción promedio de 14 unidades con una desviación estándar de 2.8. ¿Existen diferencias significativas en la reducción del marcador entre ambos tratamientos?
+
+## Solución
+
+De acuerdo al enunciado, las hipótesis son:
+
+h0: reducción promedio poblacional del grupo A = reducción promedio poblacional del grupo B (h0: mu.A = mu.B, mu.A - mu.B = 0)
+
+ha: reducción promedio poblacional del grupo A != reducción promedio poblacional del grupo B (ha: hu.A != hu.B, mu.A - mu.B != 0)
+
+Estamos ante una prueba de tipo bilateral.
+
+Antes de ejecutar la prueba debemos validar si poblacionalmente las varianzas poblacionales de la reducción de los tratamientos de ambos grupos son iguales o no. Para ello, debemos ejecutar la prueba F, que define las hipotesis de la siguiente forma:
+
+
+h0: varianza poblacional del tratamiento y su reducción del grupo A = varianza poblacionadel tratamiento y su reducción del grupo B (h0: var.A = var.B)
+
+ha: Varianza poblacional del tratamiento y su reducción del grupo A  != varianza poblacional del tratamiento y su reducción del grupo B (ha: var.A != var.B)
+
+Estamos ante una prueba de tipo bilateral.
+
+```{r}
+alpha=0.05
+n1=40
+n2=35
+media.a=15
+media.b=14
+desv.a=3.5
+desv.b=2.8
+```
+
+```{r}
+f.test2(desv.a, desv.b, n1, n2, alpha, "bilateral")
+```
+Dada una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que las varianzas poblacionales son iguales, ya que el p-value = 0.5105979, lo cual no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere que la reducción del tratamiento de ambos grupos es igual.
+
+
+Ahora podemos ejecutar el two-sample t-test, y con la conclusión de la anterior prueba, no es necesario usar la correción de Welch.
+
+```{r}
+correccion.welch = "no"
+cola = "bilateral"
+two_sample.t_test(n1, n2, media.a, media.b, desv.a, desv.b, cola, correccion.welch, alpha)
+```
+
+## Conclusión
+
+Con una confianza del 95%, NO HAY evidencia muestral suficiente para rechazar la hipotesis de que los tratamientos para la reducción de un marcador biológico en los grupos A y B son iguales, ya que el p-value = 0.1802112, que no es menor que alpha ni tampoco es pequeño. La evidencia muestral sugiere ambos tratamientos tuvieron una reducción del marcador biológico igual, lo que concluye a que no hay diferencias significativas.
+
