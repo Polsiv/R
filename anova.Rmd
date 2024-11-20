@@ -1,0 +1,150 @@
+---
+title: "Anova"
+author: "Silv"
+date: "2024-11-20"
+output: pdf_document
+---
+
+Vamos a realizar ejercicios de analisis de varianza. Vamos a realizar analisis exploratorio para validar empiricamente/muestralmente que efectivamente una variable cuantitativa puede verse afectada por una variable cualitativa. 
+
+Veamos
+
+# Ejercicio 0: Datos simulados
+Vamos a realizar un ejercicio de una variable cuantitativa normal, que se ve afectada en media, en funcion de una variable cualitativa de 3 niveles; es decir, vamos a simular el modelo teorico ANOVA:
+
+```{r}
+# Recordemos: Y_ij = mu + Tao_i + E_ij
+mu = 100
+t1 = 15
+t2 = 5
+t3 = -10
+
+Y1 = rnorm(50, mu + t1, 2)
+Y2 = rnorm(30, mu + t2, 1.5)
+Y3 = rnorm(20, mu + t3, 2.5)
+Y = c(Y1, Y2, Y3)
+
+X = c(rep("A", 50), rep("B", 30), rep("C", 20))
+
+hist(Y)
+boxplot(Y ~ X, horizontal = T)
+```
+
+
+Como vemos en la grafica, efectivamente hay evidencia muestral que sugiere una diferencia en Y en presencia de X, es decir, Y cambia o varia en funcion del estado categorico. Es necesario entonces validar esto a nivel poblacional, es decir un ANOVA.
+
+Planteemos las hipotesis:
+
+Ho: Media Real de A  = Media Real de B = Media Real de C
+Ha: Media Real de i  = Media Real de j (j != i)
+
+De acuerdo al resultado ANOVA, con una confianza del 95% hay evidencia muestral suficiente para rechazar la hipoteses de que la medai de Y es igual en todos los subgrupos, dado que P-value = 2e-16 el cual es pequenio y menos que alpha, Por lo tanto, la incidencia de X impacta el comportamiento medio de Y.
+
+Una vez que hemos realizado el ANOVA, debemos entonces hacer dos cosas:
+
+1) Validar los supuestos teoricos del ANOVA (E_ij ~ N(O, sigma ^ 2))
+2 Determinar cuales son las parejas que difieren entre si poblacionalmente.
+
+Como lo hacemos?
+
+
+1) Graficos y pruebas de hipotesis
+2) Two Sample t-testo la Prueba de Tukey HSD
+
+
+```{r}
+library(car)
+```
+
+```{r}
+e.ij = ANOVA$residuals # aca se encuentran los residuales
+t.test(e.ij, mu = 0, alternative = "two.sided", conf.level = 0.05)
+shapiro.test(e.ij)
+durbinWatsonTest(e.ij)
+bptest(ANOVA)
+```
+
+
+Ahora, vamos a hacer Tukey HSD, para encontrar las parejas de medias que difieren poblacionalmente entre si
+
+```{r}
+TUKEY.HSD = TukeyHSD(ANOVA)
+print(TUKEY.HSD)
+plot(TUKEY.HSD)
+```
+
+
+
+
+```{r}
+ANOVA = aov(Y ~ X)
+summary(ANOVA)
+plot(ANOVA)
+```
+
+Como podemos obersvar, existe diferencia significativa entre todas las parejas de los grupos. Luego, con un nivel de confianza del 95% hay evidencia muestral suficiente para rechazar la hipotesis de iguadad de medias entre las parejas de grupos
+
+
+
+# Ejercicio 1
+## Comparación de Tres Máquinas en la Producción de Piezas
+Tres máquinas (A, B y C) producen el mismo tipo de pieza, y se sospecha que hay diferencias en la calidad del producto.
+Datos: Se mide la desviación de las dimensiones de 15 piezas producidas por cada máquina.
+
+```{r}
+ma = c(0.25, 0.3, 0.28, 0.27, 0.29, 0.26, 0.3, 0.28, 0.29, 0.27, 0.31, 0.29, 0.26, 0.28,
+0.3)
+mb = c(0.32, 0.35, 0.31, 0.33, 0.34, 0.35, 0.32, 0.36, 0.34, 0.33, 0.37, 0.34, 0.33,
+0.35, 0.36)
+mc = c(0.27, 0.29, 0.28, 0.3, 0.29, 0.28, 0.29, 0.27, 0.28, 0.29, 0.31, 0.29, 0.28,
+0.29, 0.28)
+```
+
+
+## Preguntas
+a) Realiza un ANOVA de un factor para comparar las medias de las desviaciones entre las máquinas. ¿Hay evidencia de una diferencia significativa?
+
+b) Si existe una diferencia significativa, aplica una prueba post hoc (Tukey) para determinar qué máquinas difieren.
+
+c) Calcula el tamaño del efecto para interpretar la importancia práctica de las diferencias encontradas.
+
+# Solucion
+
+a)
+
+```{r}
+mu = 100
+t1 = 15
+t2 = 5
+t3 = -10
+
+Y1 = ma
+Y2 = mb
+Y3 = mc
+Y = c(Y1, Y2, Y3)
+
+X = c(rep("A", 50), rep("B", 30), rep("C", 20))
+
+hist(Y)
+boxplot(Y ~ X, horizontal = T)
+```
+
+
+```{r}
+e.ij = ANOVA$residuals # aca se encuentran los residuales
+t.test(e.ij, mu = 0, alternative = "two.sided", conf.level = 0.05)
+shapiro.test(e.ij)
+durbinWatsonTest(e.ij)
+bptest(ANOVA)
+```
+
+
+```{r}
+ANOVA = aov(Y ~ X)
+summary(ANOVA)
+plot(ANOVA)
+```
+
+
+
+
