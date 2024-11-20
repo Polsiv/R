@@ -1,6 +1,6 @@
 ---
 title: "Taller 4"
-author: "Juan Pablo Silvestre y Sebastián López"
+author: "Juan Pablo Silvestre - 99127 y Sebastián López - 97500"
 date: "2024-10-29"
 output: pdf_document
 ---
@@ -195,7 +195,7 @@ n = 12
 alpha = 0.05
 
 media_diferencia = m.a - m.d
-desv_est_diferencias = sqrt(s.a^2 + s.d^2)
+desv_est_diferencias = sqrt((s.a^2 + s.d^2) / 2 )
 
 t_value = media_diferencia / (desv_est_diferencias / sqrt(n))
 
@@ -214,7 +214,7 @@ resultado
 
 ```
 
-De acuerdo con la prueba, con una confianza del 95%, HAY evidencia muestral suficiente para rechazar la hipótesis nula: no hay reducción en la presión de las tuberías después de la intervención; esto dado que el p-valor obtenido es menor que el nivel de significancia ($\alpha$ = 0.05). En este caso, el p-valor es de aproximadamente 0.01, lo cual es significativamente bajo. Por lo tanto, la evidencia muestral sugiere que la intervención produjo una reducción significativa en la presión de las tuberías.
+De acuerdo con la prueba, con una confianza del 95%, HAY evidencia muestral suficiente para rechazar la hipótesis nula: no hay reducción en la presión de las tuberías después de la intervención; esto dado que el p-valor obtenido es menor que el nivel de significancia ($\alpha$ = 0.05). En este caso, el p-valor es de aproximadamente 0.001, lo cual es significativamente bajo. Por lo tanto, la evidencia muestral sugiere que la intervención produjo una reducción significativa en la presión de las tuberías.
 
 
 ## Ejercicio 10
@@ -225,20 +225,20 @@ Un estudio clínico investiga si dos tratamientos tienen efectos diferentes en l
 
 De acuerdo al enunciado, las hipótesis son:
 
-H0: La reducción promedio real/poblacional del grupo A = La reducción promedio real/poblacional del grupo B  
+H0: La reducción del marcador biológico promedio real/poblacional del grupo A = La reducción del marcador biológico promedio real/poblacional del grupo B  
 (H0: Mu.A = Mu.B → Mu.A - Mu.B = 0)
 
-Ha: La reducción promedio real/poblacional del grupo A != La reducción promedio real/poblacional del grupo B  
+Ha: La reducción del marcador biológico promedio real/poblacional del grupo A != La reducción del marcador biológico promedio real/poblacional del grupo B  
 (Ha: Mu.A != Mu.B → Mu.A - Mu.B != 0)
 
 Con lo anterior, se trata de una prueba de dos colas o bilateral.
 
 También debemos validar si las varianzas reales/poblacionales de las reducciones de los dos grupos son iguales o no. Para ello, debemos ejecutar una prueba F, que define las hipótesis de la siguiente forma:
 
-H0 Varianza real/poblacional de la reducción del grupo A = Varianza real/poblacional de la reducción del grupo B  
+H0: Varianza real/poblacional de la reducción del marcador biólogico del grupo A = Varianza real/poblacional de la reducción del marcador biólogico del grupo B  
 (H0: Var.A = Var.B)
 
-Ha:Varianza real/poblacional de la reducción del grupo A != Varianza real/poblacional de la reducción del grupo B  
+Ha: Varianza real/poblacional de la reducción del marcador biólogico del grupo A != Varianza real/poblacional de la reducción del marcador biólogico del grupo B  
 (Ha: Var.A != Var.B)
 
 Con lo anterior, se trata de una prueba de dos colas o bilateral.
@@ -267,14 +267,13 @@ cola = "bilateral"
 two.sample.t.test(nA, nB, mediaA, mediaB, sA, sB, correccion, cola, alpha)
 ```
 
-Con base en la prueba, con una confianza del 95% NO hay evidencia muestral suficiente para rechazar la hipótesis nula: la reducción del marcador biológico entre los tratamientos A y B es igual; esto es, dado que el P-Value = 0.0678 no es menor ni tampoco pequeño respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugiere que la reducción del marcador biológico es similar entre los tratamientos A y B.
+Con base en la prueba, y con una confianza del 95%, NO hay evidencia muestral suficiente para rechazar la hipótesis nula: la reducción del marcador biológico entre los tratamientos A y B es igual; esto es, dado que el P-Value = 0.0678 no es menor ni tampoco pequeño respecto a alpha = 0.05. Por lo tanto, la evidencia muestral sugiere que la reducción del marcador biológico es similar entre los tratamientos A y B.
 
 
 
 # Por último
 
 Se muestra cómo se ejecutó la prueba Two-Sample T-test.
-
 
 ```{r}
 two.sample.t.test = function(n1, n2, media1, media2, s1, s2, correccion, cola, alpha ){
@@ -287,7 +286,7 @@ two.sample.t.test = function(n1, n2, media1, media2, s1, s2, correccion, cola, a
   if (correccion == TRUE){
     
     t0 = (media1 - media2) / sqrt((s1^2 / n1) + (s2^2 / n2))
-    v = ((s1^2 / n2) + (s2^2 / n2))^2 / ((s1^2 / n1)^2 / (n1 - 1) + (s2^2 / n2)^2 / (n2 - 1))
+    v = ((s1^2 / n1) + (s2^2 / n2))^2 / ((s1^2 / n1)^2 / (n1 - 1) + (s2^2 / n2)^2 / (n2 - 1))
     parametro = v
     
   } else {

@@ -47,7 +47,7 @@ two.sample.t.test = function(n1, n2, media1, media2, s1, s2, correccion, cola, a
   if (correccion == TRUE){
     
     t0 = (media1 - media2) / sqrt((s1^2 / n1) + (s2^2 / n2))
-    v = ((s1^2 / n2) + (s2^2 / n2))^2 / ((s1^2 / n1)^2 / (n1 - 1) + (s2^2 / n2)^2 / (n2 - 1))
+    v = ((s1^2 / n1) + (s2^2 / n2))^2 / ((s1^2 / n1)^2 / (n1 - 1) + (s2^2 / n2)^2 / (n2 - 1))
     parametro = v
     
   } else {
